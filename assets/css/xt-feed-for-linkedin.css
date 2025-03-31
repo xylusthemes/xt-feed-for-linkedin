@@ -1,0 +1,87 @@
+/* plugin global css start*/
+.lf-switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+}
+
+.lf-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.lf-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 20px;
+}
+
+.lf-slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 4px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .lf-slider {
+    background-color: #005AE0;
+}
+
+input:checked + .lf-slider:before {
+    transform: translateX(18px);
+}
+
+.lf-delete-btn {
+    background: transparent;
+    border: none;
+    color: #d9534f;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-left: 10px;
+}
+
+.lf-delete-btn:hover {
+    color: #c9302c;
+}
+
+.lf-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+.xtfefoli_button {
+    font-weight: 600 !important;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color .2s ease;
+    position: relative;
+    text-decoration: none;
+    color: #fff;
+    white-space: nowrap;
+    letter-spacing: normal;
+    background-color: #005AE0;
+    border: 0;
+}
+.xtfefoli_button:hover, .xtfefoli_button:active, .xtfefoli_button:focus {
+    background-color: #0049b3;
+    border: 0;
+    color: #fff;
+}
+/* plugin global css end*/

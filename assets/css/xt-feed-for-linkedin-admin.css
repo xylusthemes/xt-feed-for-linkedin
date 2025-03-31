@@ -1,0 +1,687 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+
+/* Start Tab */
+.lf-app .var-tab {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1 0 auto;
+    padding: 0 var(--tab-padding);
+    font-size: var(--tab-font-size);
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    box-shadow: none;
+}
+
+a.var-tab.var--box.var-tab--inactive:focus {
+    box-shadow: none;
+}
+
+.lf-app .var-tab--active {
+    color: #005AE0;
+    border-bottom: 3px solid #005AE0;
+}
+
+.lf-app .var-tab--inactive {
+    color: var(--tab-inactive-color)
+}
+
+.lf-app .var-tabs {
+    border-radius: var(--tabs-radius);
+    background: var(--tabs-background);
+    overflow: hidden;
+    transition: background-color .25s
+}
+
+.lf-app .var-tabs__tab-wrap {
+    position: relative;
+    display: flex;
+    height: 100%
+}
+
+.lf-app .var-tabs--layout-horizontal {
+    flex-direction: row
+}
+
+.lf-app .var-tabs--layout-horizontal-scrollable {
+    overflow-x: auto;
+    overflow-y: hidden
+}
+
+.lf-app .var-tabs--layout-horizontal-scrollable::-webkit-scrollbar {
+    display: none
+}
+
+.lf-app .var-tabs--layout-horizontal-padding {
+    padding: 0 var(--tabs-padding)
+}
+
+.lf-app .var-tabs--layout-horizontal-indicator {
+    bottom: 0;
+    height: var(--tabs-indicator-size)
+}
+
+.lf-app .var-tabs--layout-horizontal-indicator {
+    right: 0
+}
+
+.lf-app .var-tabs--layout-horizontal-reverse-indicator {
+    top: 0;
+    height: var(--tabs-indicator-size)
+}
+
+.lf-app .var-tabs--layout-horizontal-reverse-indicator {
+    right: 0
+}
+
+.lf-app .var-tabs--layout-horizontal-indicator-inner {
+    width: var(--tabs-indicator-inner-size);
+    height: 100%
+}
+
+
+.lf-app .var-tabs--item-horizontal {
+    height: var(--tabs-item-horizontal-height)
+}
+
+.lf-app .lf-tabs {
+    display: flex;
+    align-items: center;
+    --tabs-item-horizontal-height: 52px;
+    --tabs-radius: 2px;
+    --tabs-padding: 0;
+    --tabs-indicator-size: 2px;
+    --tabs-background: none;
+    --tabs-indicator-inner-size: 100%;
+    --tab-padding: 18px;
+    --tab-inactive-color: #141B38;
+    --tab-font-size: 14px;
+}
+
+.lf-app .var-tabs {
+    margin-bottom: -2px
+}
+
+.lf-app .var-tabs .var-tab {
+    font-weight: 600;
+    white-space: pre;
+    position: relative;
+    overflow: hidden;
+    text-decoration : none;
+}
+
+.lf-app .lf-tabs {
+    display: flex;
+    border-bottom: 2px solid #E8E8EB;
+    position: relative;
+    margin-bottom: var(--lf-gutter)
+}
+
+.lf-container {
+    margin-right: auto;
+    margin-left: auto;
+    max-width: 1240px;
+}
+
+
+html:not([data-scroll="0"]) .lf-header {
+    box-shadow: 0 2px 5px #0000000d;
+    transition: box-shadow .6s
+}
+/* End Tabs*/
+
+/* start header */
+.lf-header {
+    z-index: 1051;
+    top: 32px;
+    right: 0;
+    left: 160px;
+    background-color: #fff;
+    height: var(--lf-header-height, 72px);
+    color: #141b38
+}
+
+.lf-header .lf-header-content {
+    padding: 0;
+    display: flex;
+    height: 72px;
+    align-items: center;
+    gap: 4px
+}
+
+.lf-header .lf-header-content a:focus {
+    box-shadow: none
+}
+
+.lf-header .lf-header-content .spacer {
+    display: inline-flex;
+    width: 20px;
+    height: 2px;
+    background: #d0d1d7
+}
+
+.lf-header .lf-header-content .spacer {
+    transform: rotate(70deg)
+}
+
+.lf-header .lf-header-content .page-name {
+    display: inline-flex;
+    font-size: 16px;
+    font-weight: 400;
+    flex: 1 0 auto
+}
+
+.lf-header .lf-header-content .header-actions {
+    display: flex
+}
+
+.lf-header .lf-header-content .header-actions .round {
+    position: relative;
+    background-color: #f3f4f5;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color .2s ease
+}
+
+.lf-header .lf-header-content .header-actions .round {
+    margin-right: 10px
+}
+
+.lf-header .lf-header-content .header-actions .round svg {
+    width: 20px;
+    height: 20px
+}
+
+.lf-header .lf-header-content .header-actions .round:hover {
+    background-color: #e5e7e9
+}
+
+@keyframes bounce {
+
+    0%,
+    25%,
+    50%,
+    75%,
+    to {
+        transform: translate(-50%)
+    }
+
+    40% {
+        transform: translate(-50%, -8px)
+    }
+
+    60% {
+        transform: translate(-50%, -4px)
+    }
+}
+
+.lf-card {
+    position: relative;
+    color: #141b38;
+    background-color: #fff;
+    border: 1px solid #E8E8EB;
+    box-shadow: 0 2px 5px #0000000d;
+    margin: var(--lf-gutter) 0
+}
+
+.lf-card svg.lf-circle-question-mark {
+    width: 17px;
+    height: 17px;
+    color: #8c8f9a;
+    transition: background-color .2s ease
+}
+
+.lf-card svg.lf-circle-question-mark:hover {
+    color: #5a5c66
+}
+
+.lf-card>.header {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    padding: 0 20px;
+    font-weight: 600;
+    font-size: 16px;
+    border-bottom: 1px solid #E8E8EB
+}
+
+.lf-card>.header.toggles {
+    cursor: pointer
+}
+
+.lf-card>.header .text {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center
+}
+
+.lf-card>.header .text>* {
+    cursor: auto
+}
+
+.lf-card>.header .text .header-icon {
+    display: flex
+}
+
+.lf-card>.header .text .header-icon svg {
+    width: 24px;
+    height: 24px
+}
+
+.lf-card>.header .text .header-icon svg {
+    margin-left: 16px
+}
+
+.lf-card>.header .text .header-title {
+    display: flex;
+    align-items: center
+}
+
+.lf-card>.header .text svg.lf-circle-question-mark {
+    cursor: pointer;
+    width: 17px;
+    height: 17px
+}
+
+.lf-header .wpdb-header-content {
+    padding: 0;
+    display: flex;
+    height: 72px;
+    align-items: center;
+    gap: 4px;
+}
+.lf-header .wpdb-header-content .spacer {
+    transform: rotate(-70deg);
+}
+.lf-header .wpdb-header-content .spacer {
+    display: inline-flex;
+    width: 20px;
+    height: 2px;
+    background: #d0d1d7;
+}
+
+.lf-header .wpdb-header-content .page-name {
+    display: inline-flex;
+    font-size: 16px;
+    font-weight: 400;
+    flex: 1 0 auto;
+}
+.lf-header .wpdb-header-content .header-actions {
+    display: flex;
+}
+
+.lf-header .wpdb-header-content .header-actions .round {
+    margin-left: 10px;
+}
+.lf-header .wpdb-header-content .header-actions .round {
+    position: relative;
+    background-color: #f3f4f5;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color .2s ease;
+}
+/* end header*/
+
+/*support page start*/
+.lf-about-us-plugins {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.lf-row {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    margin-left: -.5rem;
+    margin-right: -.5rem;
+}
+
+.lf-about-us-plugins .lf-plugin {
+    flex-direction: column;
+    font-size: 14px;
+    line-height: 24px;
+    width: 50%;
+}
+
+
+.lf-about-us-plugins .lf-plugin .lf-plugin-main {
+    display: flex;
+    flex-direction: row;
+    padding: 22px;
+    flex-grow: 1;
+}
+
+.lf-about-us-plugins .lf-plugin-footer {
+    background-color: #fff;
+    box-shadow: 0 2px 5px #0000000d;
+    border: 1px solid #E8E8EB;
+}
+
+.lf-about-us-plugins .lf-plugin .lf-plugin-main img {
+    margin: 0 30px 0 0;
+}
+
+.lf-about-us-plugins .lf-plugin .lf-plugin-main img {
+    width: 50px;
+    max-width: 50px;
+    max-height: 50px;
+}
+
+.lf-about-us-plugins .lf-plugin .lf-plugin-main .lf-main-name {
+    margin: 0 0 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #141b38;
+}
+
+.lf-about-us-plugins .lf-plugin .lf-plugin-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+}
+
+.lf-about-us-plugins .lf-plugin .lf-plugin-main,  .lf-about-us-plugins .lf-plugin .lf-plugin-footer {
+    background-color: #fff;
+    box-shadow: 0 2px 5px #0000000d;
+    border: 1px solid #E8E8EB;
+}
+
+.lf-about-us-plugins .lf-plugin .lf-plugin-footer .lf-footer-status {
+    font-size: 14px;
+    line-height: 22px;
+    font-weight: 700;
+}
+
+.lf-about-us-plugins .lf-plugin .lf-plugin-footer .lf-footer-status div {
+    margin-right: 12px;
+}
+
+.lf-about-us-plugins .lf-plugin .lf-plugin-footer .lf-footer-status .lf-footer-status-label {
+    color: #8c8f9a;
+}
+
+.lf-about-us-plugins .lf-plugin .lf-plugin-footer .lf-footer-status div {
+    display: inline-block;
+}
+
+.lf-support-features-card,  .lf-support-features-card2 {
+    display: flex;
+    flex-basis: 32%;
+    flex-wrap: nowrap;
+    flex-grow: 1;
+    box-sizing: border-box;
+    margin: .5rem;
+    background-color: #fff;
+}
+
+.lf-support-features-card2 {
+    flex-basis: 48%;
+}
+
+.lf-support-features-card:last-child, .lf-support-features-card2:last-child {
+    max-width: 100%
+}
+
+@media (min-width: 661px) {
+    .lf-support-features-card, .lf-support-features-card2 {
+        margin-bottom: 1%
+    }
+}
+
+@media (max-width: 660px) {
+    .lf-support-features-card, .lf-support-features-card2 {
+        max-width: 100%;
+        margin-bottom: .5rem
+    }
+}
+
+@media (min-width: 481px) {
+    .lf-support-features-card {
+        padding: 2rem
+    }
+}
+
+@media (max-width: 480px) {
+    .lf-support-features-card {
+        padding: 1rem;
+    }
+    .lf-support-features-card2{
+        padding: 0;
+    }
+    .lf-about-us-plugins .lf-plugin{
+        width: 100%;
+    }
+}
+
+.lf-support-features-list {
+    list-style: initial;
+    margin-left: 1rem
+}
+
+.lf-support-features-img {
+    width: 5.625rem;
+    margin-right: .5rem;
+    line-height: 1
+}
+
+@media (min-width: 961px) {
+    .lf-support-features-img {
+        width: 6.5rem;
+        margin-right: 1.125rem
+    }
+}
+
+.lf-support-features-icon {
+    display: block;
+    max-width: 80%;
+    margin-left: 0px;
+}
+
+@media (min-width: 481px) {
+    .lf-support-features-icon {
+        max-width: 80%;
+        margin-left: 0px;
+    }
+}
+
+.lf-support-features-text {
+    flex: 1
+}
+
+.lf-support-features-title {
+    margin: 0
+}
+
+.lf-support-features, .lf-support-features2 {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    margin-left: -.5rem;
+    margin-right: -.5rem
+}
+
+@media (max-width: 660px) {
+    .lf-support-features, .lf-support-features2  {
+        display: block
+    }
+}
+/*end new support page*/
+
+/* plugin common Css start */
+.lf-card-single-row {
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+.lf-card-single-row-content {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+}
+.lf-profile-info {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+.lf-profile-pic {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 20px;
+}
+.lf-user-name {
+    font-weight: bold;
+}
+.lf-user-email {
+    font-size: 14px;
+    color: #555;
+    opacity: 0.8;
+}
+.lf-user-details{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.lf-post-type-item{
+    display: flex;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 8px;
+    justify-content: space-between;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.xtfefoli_sp_keyword{
+    cursor: pointer;    
+}
+.xtfefoli_sp_keyword:hover {
+    background: #005ae01f;
+}
+
+#wpcontent{
+    padding-left: 0;
+}
+
+#poststuff #post-body.columns-2 {
+    margin-right: 0;
+}
+
+.form-table{
+    margin : 20px 0;
+}
+    
+.lf-inner-main-section{
+    display: flex;
+}
+.lf-inner-section-1{
+    width : 20%;
+}
+.lf-inner-section-2{
+    width : 80%;
+}
+
+.lf-inner-section-2 .lf-texonomy-section{
+    display: flex;
+    gap: 30px;
+}
+
+.lf-wrap{
+    top: 10px;
+    position: relative;
+}
+
+.notice {
+    margin: 10px 0;
+    display: none !important;
+}
+
+.lf-notice{
+    display: block !important;
+}
+
+.lf-circle-question-mark {
+    cursor: pointer;
+    width: 17px;
+    height: 17px;
+    color: #000;
+    transition: background-color 0.2s ease;
+    margin: 5px 5px 0 5px;
+}
+
+.lf-card .content {
+    font-size: 14px;
+    line-height: 22px;
+    padding: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+/* plugin common css end */
+
+/* start footer section */
+.lf-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0 30px;
+    margin-top: 70px;
+}
+.lf-footer div:first-of-type {
+    font-weight: 600;
+}
+.lf-footer div {
+    margin-top: 10px;
+}
+.lf-footer .lf-links a {
+    color: #005ae0;
+}
+
+.lf-footer .lf-social-links a:focus {
+    box-shadow: none;
+}
+
+.lf-footer .lf-social-links a:hover {
+    color: #005AE0;
+}
+
+.lf-footer div svg.lf-facebook, .lf-footer div svg.lf-linkedin {
+    width: 16px;
+    height: 16px;
+}
+.lf-footer div svg.lf-twitter, .lf-footer div svg.lf-youtube {
+    width: 17px;
+    height: 16px;
+}
+.lf-footer .lf-social-links a{
+    text-decoration : none;
+    color: #787c82;
+}
+/* end footer section*/
