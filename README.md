@@ -10,6 +10,8 @@ XT Feed for LinkedIn is a simple yet powerful plugin that allows you to automati
 
 Whether you are a blogger, marketer, or business owner, this plugin helps you streamline content distribution and reach a wider LinkedIn audience effortlessly.  
 
+[Documentation](http://docs.xylusthemes.com/docs/xt-feed-for-linkedin/) | [Plugin Site](https://xylusthemes.com/plugins/xt-feed-for-linkedin/)
+
 ### ✅ **Key Features:**  
 - 🔹 **Auto-share** posts, pages, and custom post types upon publishing.  
 - 🔹 **Manual sharing** from the post details page or post list.  

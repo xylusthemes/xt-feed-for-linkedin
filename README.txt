@@ -1,6 +1,6 @@
 === XT Feed for LinkedIn ===
 Contributors: xylus, rajat1192  
-Tags: Linkedin, feed, share, Autoshare, auto-publish  
+Tags: Linkedin, feed, share, auto share, auto-publish  
 Requires at least: 4.0  
 Requires PHP: 7.0  
 Tested up to: 6.7  
@@ -13,6 +13,8 @@ XT Feed for LinkedIn auto-shares WordPress posts to LinkedIn with one click, mak
 == Description ==  
 🚀 **XT Feed for LinkedIn – The Easiest Way to Share WordPress Content on LinkedIn!**  
 XT Feed for LinkedIn is a simple yet powerful plugin that allows you to automatically share WordPress posts, pages, and custom post types to your LinkedIn profile or business page with just one click. Whether you are a blogger, marketer, or business owner, this plugin helps you streamline content distribution and reach a wider LinkedIn audience effortlessly.
+
+[Documentation](http://docs.xylusthemes.com/docs/xt-feed-for-linkedin/) | [Plugin Site](https://xylusthemes.com/plugins/xt-feed-for-linkedin/)
 
 With XT Feed for LinkedIn, you can:  
 ✅ Automatically share posts, pages, and custom post types as soon as they are published.  
