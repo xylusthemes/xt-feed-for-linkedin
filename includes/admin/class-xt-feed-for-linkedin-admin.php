@@ -169,16 +169,18 @@ class XT_Feed_Linkedin_Admin {
 	 */
 	public function xtfefoli_add_linkedin_feedpres_meta_boxes() {
 		$if_get_option = xtfefoli_get_options();
-		$selected_cpts = $if_get_option['xtfefoli_linkedin_feedpress_cpts'];
+		if ( is_array( $if_get_option ) && isset( $if_get_option['xtfefoli_linkedin_feedpress_cpts'] ) ) {
+			$selected_cpts = $if_get_option['xtfefoli_linkedin_feedpress_cpts'];
 
-		add_meta_box(
-			'linkedin_feedpress_metabox',
-			__( 'XT Feed for LinkedIn', 'xt-feed-for-linkedin' ),
-			array( $this, 'render_linkedin_feedpress_meta_boxes' ),
-			$selected_cpts,
-			'normal',
-			'high'
-		);
+			add_meta_box(
+				'linkedin_feedpress_metabox',
+				esc_attr__( 'XT Feed for LinkedIn', 'xt-feed-for-linkedin' ),
+				array( $this, 'render_linkedin_feedpress_meta_boxes' ),
+				$selected_cpts,
+				'normal',
+				'high'
+			);
+		}
 	}
     
     /**
