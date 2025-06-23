@@ -3,7 +3,7 @@
  * Plugin Name:       XT Feed for LinkedIn
  * Plugin URI:        http://xylusthemes.com/plugins/xt-feed-for-linkedin/
  * Description:       XT Feed for LinkedIn allows you to seamlessly share your WordPress posts and custom post types on LinkedIn. Expand your reach, boost engagement, and automate content sharing with ease!
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            Xylus Themes
  * Author URI:        https://xylusthemes.com
  * License:           GPL-2.0+
@@ -88,7 +88,7 @@ if ( ! class_exists( 'XT_Feed_Linkedin' ) ) :
 		 * @since 1.0.0
 		 */
 		public function __clone() {
-			_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'xt-feed-for-linkedin' ), '1.0.0' );
+			_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'xt-feed-for-linkedin' ), '1.0.1' );
 		}
 
 		/**
@@ -97,7 +97,7 @@ if ( ! class_exists( 'XT_Feed_Linkedin' ) ) :
 		 * @since 1.0.0
 		 */
 		public function __wakeup() {
-			_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'xt-feed-for-linkedin' ), '1.0.0' );
+			_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'xt-feed-for-linkedin' ), '1.0.1' );
 		}
 
 
@@ -112,12 +112,12 @@ if ( ! class_exists( 'XT_Feed_Linkedin' ) ) :
 
 			// Plugin version.
 			if ( ! defined( 'XTFEFOLI_VERSION' ) ) {
-				define( 'XTFEFOLI_VERSION', '1.0.0' );
+				define( 'XTFEFOLI_VERSION', '1.0.1' );
 			}
 
 			// Minimum Pro plugin version.
 			if ( ! defined( 'XTFEFOLI_MIN_PRO_VERSION' ) ) {
-				define( 'XTFEFOLI_MIN_PRO_VERSION', '1.7.2' );
+				define( 'XTFEFOLI_MIN_PRO_VERSION', '1.0.0' );
 			}
 
 			// Plugin folder Path.
