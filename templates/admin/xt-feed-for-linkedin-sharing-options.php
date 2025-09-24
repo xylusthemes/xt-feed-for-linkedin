@@ -18,6 +18,7 @@ $original_lfgsm       = esc_textarea("[POST_TITLE]\n\n Read more: [POST_LINK]\n\
 $lfgsm_option         = get_option( 'xtfefoli_global_sharing_message', $original_lfgsm );
 $selected_cpts        = isset( $xtfefoli_so_options['xtfefoli_linkedin_feedpress_cpts'] ) ? $xtfefoli_so_options['xtfefoli_linkedin_feedpress_cpts'] : array() ;
 $xtfefoli_bddspol     = isset( $xtfefoli_so_options['xtfefoli_bddspol'] ) ? $xtfefoli_so_options['xtfefoli_bddspol'] : 'no' ;
+$xtfefoli_postfimage  = isset( $xtfefoli_so_options['xtfefoli_postfimage'] ) ? $xtfefoli_so_options['xtfefoli_postfimage'] : 'no' ;
 
 
 
@@ -59,8 +60,10 @@ $xtfefoli_bddspol     = isset( $xtfefoli_so_options['xtfefoli_bddspol'] ) ? $xtf
     </div>
 
     <?php
+        global $wp_post_types;
         $post_types = get_post_types( [ 'public' => true], 'objects' );
         unset( $post_types['attachment'] );
+        unset( $post_types['xtlf_share_schedule'] );
     ?>
     <div class="form-table">
         <div class="lf-card mt-2">
@@ -88,6 +91,37 @@ $xtfefoli_bddspol     = isset( $xtfefoli_so_options['xtfefoli_bddspol'] ) ? $xtf
                         </div>
                     <?php endforeach; ?>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-table">
+        <div class="lf-card mt-2">
+            <div class="header">
+                <div class="text">
+                    <div class="header-icon"></div>
+                    <div class="header-title">
+                        <span><?php esc_attr_e( 'Sharing Post Featured Image', 'xt-feed-for-linkedin' ); ?></span>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <?php 
+                    if ( function_exists( 'xtlf_is_pro' ) && xtlf_is_pro() ) { 
+                        ?>
+                        <span>
+                            <input type="checkbox" <?php if( $xtfefoli_postfimage == 'on' ){ echo 'checked'; }; ?> name="xtfefoli_sharing_option[xtfefoli_postfimage]" />
+                            <?php esc_attr_e( 'Share Post Featured Image', 'xt-feed-for-linkedin' ); ?>
+                        </span>
+                        <?php 
+                    }else{ 
+                        ?>
+                        <div class="lf-card-center" style="color:#d9534f; font-weight:bold;">
+                            <?php esc_attr_e( 'Upgrade to' ); ?><strong><?php esc_attr_e( ' Pro' ); ?></strong> <?php esc_attr_e( ' to unlock the Post Featured Image sharing option'); ?>
+                        </div>
+                        <?php 
+                    } 
+                ?>
             </div>
         </div>
     </div>

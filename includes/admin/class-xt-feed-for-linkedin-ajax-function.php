@@ -171,7 +171,8 @@ class XT_Feed_Linkedin_Ajax {
         }
 
         // Share to LinkedIn Company Page
-        $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id );
+        $sharing_type    = 'manual';
+        $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id, $sharing_type );
 
         if ( isset( $linkedin_result['message'] ) && !empty( $linkedin_result['message'] ) ) {
             $e_message = $linkedin_result['message'];
@@ -243,7 +244,8 @@ class XT_Feed_Linkedin_Ajax {
         }
 
         // Share to LinkedIn Company Page
-        $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id );
+        $sharing_type    = 'manual';
+        $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id, $sharing_type );
 
         if ( $linkedin_result ) {
 

@@ -617,6 +617,10 @@ html:not([data-scroll="0"]) .lf-header {
     position: relative;
 }
 
+.error, .success, .warning{
+    display: none !important;   
+}
+
 .notice {
     margin: 10px 0;
     display: none !important;
@@ -685,3 +689,84 @@ html:not([data-scroll="0"]) .lf-header {
     color: #787c82;
 }
 /* end footer section*/
+
+
+.xtlf-pro-badge {
+    margin-left: 5px;
+    height: 22px;
+    border-radius: 3px;
+    background: #005AE0;
+    color: #FFF;
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: 600;
+    display: inline-flex;
+    padding: 0 4px;
+    align-items: center;
+}
+
+.lf-pro-upgrade-wrapper {
+    position: relative;
+    text-align: center;
+    padding: 50px 20px;
+    background: #ffffff;
+    border: 2px dashed #005AE0;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.lf-pro-upgrade-message {
+    font-size: 18px;
+    font-weight: bold;
+    color: #005AE0;
+    margin-bottom: 15px;
+}
+
+.lf-pro-upgrade-btn {
+    display: inline-block;
+    padding: 12px 25px;
+    background: #005AE0;
+    color: #fff;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+.lf-pro-upgrade-btn:hover {
+    background: #0041a8;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    color:#fff;
+}
+
+.lf-pro-upgrade-subtext {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #000000;
+}
+
+.lf-card .lf-content {
+  font-size: 14px;
+  line-height: 22px;
+  padding: 30px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.xtlf_source_import input[type="text"],
+.xtlf_source_import input[type="number"],
+.xtlf_source_import select {
+  width: 45%;
+  max-width: 100%;
+}
+
+.lf-title-text{
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 22px;
+  display: flex;
+  align-items: center;
+}
