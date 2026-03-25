@@ -70,7 +70,7 @@ class XT_Feed_Linkedin_User_Company_Data {
                 $response       = wp_remote_get( $get_lfc_url, [
                     'headers'   => [
                         'Authorization' => 'Bearer ' . $access_token,
-                        'LinkedIn-Version' => '202501',
+                        'LinkedIn-Version' => date('Ym'),
                         'X-Restli-Protocol-Version' => '2.0.0',
                         'Accept' => 'application/json',
                     ],
@@ -117,7 +117,7 @@ class XT_Feed_Linkedin_User_Company_Data {
         $lfc_response       = wp_remote_get( $companiesurl, array( 
             'headers'       => array( 
                 'Authorization' => 'Bearer '.$access_token, 
-                'Linkedin-Version' => '202501', 
+                'Linkedin-Version' => date('Ym'), 
                 'X-Restli-Protocol-Version' => '2.0.0' 
             ) 
        ) );

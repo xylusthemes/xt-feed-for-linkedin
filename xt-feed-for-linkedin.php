@@ -221,7 +221,7 @@ if ( ! class_exists( 'XT_Feed_Linkedin' ) ) :
 					post_id BIGINT(20) UNSIGNED NOT NULL,
 					shared_linkedin_id BIGINT(20) UNSIGNED NULL,
 					page_profile_id VARCHAR(100) NOT NULL,
-					sharing_type ENUM('manual','scheduled') NOT NULL DEFAULT 'scheduled',
+					sharing_type ENUM('manual','scheduled','auto_publish') NOT NULL DEFAULT 'scheduled',
 					shared_time DATETIME NULL,
 					status ENUM('pending','shared','failed') NOT NULL DEFAULT 'pending',
 					error_message TEXT NULL,
