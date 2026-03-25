@@ -230,7 +230,7 @@ if ( ! class_exists( 'XT_Feed_Linkedin' ) ) :
 					updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 					PRIMARY KEY (id),
 					KEY post_id (post_id),
-					KEY status (status),
+					KEY status (status)
 				) $charset_collate;";
 
 				require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
