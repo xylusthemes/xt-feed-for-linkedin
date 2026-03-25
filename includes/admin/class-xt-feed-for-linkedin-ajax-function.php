@@ -266,8 +266,8 @@ class XT_Feed_Linkedin_Ajax {
         } else {
             $activate_url = esc_url( admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=general' ) );
             wp_send_json_error( 'No active account was found. Please select an authorized account <strong><a href="' . $activate_url . '" target="_blank">here</a></strong>.' );
-
         }
-    }   
+        wp_die();
+    }
     
 }

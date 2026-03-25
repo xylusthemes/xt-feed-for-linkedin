@@ -128,8 +128,6 @@
                             $(this).html("").show();
                         });
                     }, 3000);
-
-                    xtfefoli_post_postID
                 },
                 error: function () {
                     noticeBox.html('<div class="notice notice-error is-dismissible"><p>An error occurred. Please try again.</p></div>');
@@ -143,7 +141,6 @@
                 }
             });
         });
-		
 	});
 
 })( jQuery );
