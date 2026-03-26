@@ -74,6 +74,9 @@ class XT_Feed_Linkedin_Admin {
 		do_action( 'xtfefoli_bitween_submenu', $submenu, 'xt_feed_for_linkedin' );
 		
 		$submenu['xt_feed_for_linkedin'][] = array( __( 'Manage Scheduled Shares', 'xt-feed-for-linkedin' ), 'manage_options', admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=manage_scheduled_shares' ) );
+		if( xtlf_is_pro() ){ 
+			$submenu['xt_feed_for_linkedin'][] = array( __( 'License', 'xt-feed-for-linkedin' ), 'manage_options', admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=license' ) );
+		}
 		$submenu['xt_feed_for_linkedin'][] = array( __( 'Support & Help', 'xt-feed-for-linkedin' ), 'manage_options', admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=support' ) );
 		
 		do_action( 'xtfefoli_after_submenu', $submenu, 'xt_feed_for_linkedin' );
@@ -93,7 +96,7 @@ class XT_Feed_Linkedin_Admin {
 		$page_title = ucwords( $_GET['tab'] );
         $active_tab = isset( $_GET['tab'] ) ? esc_attr( sanitize_text_field( wp_unslash( $_GET['tab'] ) ) ) : 'general';
         $gettab     = ucwords( str_replace( '_', ' ', $active_tab ) );
-        if( $active_tab == 'general' || $active_tab == 'support' || $active_tab == 'sharing_options' || $active_tab == 'manage_scheduled_shares' || $active_tab == 'dashboard' || $active_tab == 'set_schedule' ){
+        if( $active_tab == 'general' || $active_tab == 'support' || $active_tab == 'sharing_options' || $active_tab == 'manage_scheduled_shares' || $active_tab == 'dashboard' || $active_tab == 'set_schedule' || $active_tab == 'license' ){
             $gettab     = ucwords( str_replace( '_', ' ', $gettab ) );
             $page_title = $gettab;
         }
@@ -131,6 +134,17 @@ class XT_Feed_Linkedin_Admin {
 												<a href="<?php echo esc_url( admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=manage_scheduled_shares' ) ); ?>" class="var-tab <?php echo $active_tab == 'manage_scheduled_shares' ? 'var-tab--active' : 'var-tab--inactive'; ?>">
 													<span class="tab-label"><?php esc_attr_e( 'Manage Scheduled Shares', 'xt-feed-for-linkedin' ); if( !xtlf_is_pro() ){ echo '<div class="xtlf-pro-badge"> PRO </div>'; } ?></span>
 												</a>
+
+												<?php 
+													if( xtlf_is_pro() ){ 
+														?>
+															<a href="<?php echo esc_url( admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=license' ) ); ?>" class="var-tab <?php echo $active_tab == 'license' ? 'var-tab--active' : 'var-tab--inactive'; ?>">
+																<span class="tab-label"><?php esc_attr_e( 'License', 'xt-feed-for-linkedin' ); if( !xtlf_is_pro() ){ echo '<div class="xtlf-pro-badge"> PRO </div>'; } ?></span>
+															</a>
+														<?php
+													}
+												?>
+
 												<a href="<?php echo esc_url( admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=support' ) ); ?>" class="var-tab <?php echo $active_tab == 'support' ? 'var-tab--active' : 'var-tab--inactive'; ?>">
 													<span class="tab-label"><?php esc_attr_e( 'Support & Help', 'xt-feed-for-linkedin' ); ?></span>
 												</a>
@@ -152,6 +166,12 @@ class XT_Feed_Linkedin_Admin {
 								require_once XTFEFOLIPRO_PLUGIN_DIR . '/templates/admin/xt-feed-for-linkedin-set-schedule.php';
 							}elseif ( $active_tab == 'manage_scheduled_shares' && defined( 'XTFEFOLIPRO_PLUGIN_DIR' ) ) {
                                 require_once XTFEFOLIPRO_PLUGIN_DIR . '/templates/admin/xt-feed-for-linkedin-manage-share-schedule.php';
+							}elseif ( $active_tab == 'license' && defined( 'XTFEFOLIPRO_PLUGIN_DIR' ) ) {
+								if ( function_exists( 'xtfefolipro_license_page' ) ) {
+									xtfefolipro_license_page();
+								} else {
+									echo '<p>License feature is available in Pro version.</p>';
+								}
                             }elseif( $active_tab == 'support' ){
                                 require_once XTFEFOLI_PLUGIN_DIR . '/templates/admin/xt-feed-for-linkedin-support.php';
                             }else{
@@ -208,7 +228,7 @@ class XT_Feed_Linkedin_Admin {
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_GET['page'] ) && esc_attr( sanitize_text_field( wp_unslash( $_GET['page'] ) ) ) == 'xt_feed_for_linkedin' ) {
-			$allowed_tabs = array( 'general', 'support', 'sharing_options', 'set_schedule', 'manage_scheduled_shares' );
+			$allowed_tabs = array( 'general', 'support', 'sharing_options', 'set_schedule', 'manage_scheduled_shares', 'license' );
 
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$tab = isset( $_GET['tab'] ) ? esc_attr( sanitize_text_field( wp_unslash( $_GET['tab'] ) ) ) : 'general';
