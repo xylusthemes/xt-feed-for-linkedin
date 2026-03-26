@@ -315,7 +315,7 @@ class XT_Feed_Linkedin_Sharing {
         $status          = 'failed';
         $shared_pid      = null;
         if ( $type == 'profile' ) {
-            if ( $image_upload && method_exists( $xt_feed_for_linkedin_pro->sharing_pro, 'xtfefoli_share_to_linkedin_profile_with_image' ) ) {
+            if ( $image_upload && ! empty( $xt_feed_for_linkedin_pro->sharing_pro ) && method_exists( $xt_feed_for_linkedin_pro->sharing_pro, 'xtfefoli_share_to_linkedin_profile_with_image' ) ) {
                 $shared_post_id = $xt_feed_for_linkedin_pro->sharing_pro->xtfefoli_share_to_linkedin_profile_with_image( $message, $post_id, $access_token, $user_id );
             } else {
                 $shared_post_id = $this->xtfefoli_share_to_linkedin_profile_only_text( $message, $post_id, $access_token, $user_id );
