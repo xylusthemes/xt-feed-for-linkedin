@@ -64,9 +64,11 @@ class XT_Feed_Linkedin_Sharing {
 
             if( !empty( $get_shared_histories ) ){
                 foreach( $get_shared_histories as $get_sh ){
-                    $post_url = esc_url( 'https://www.linkedin.com/feed/update/' . $get_sh['id'] );
-                    $formatted_date = gmdate( 'Y-m-d H:i:s', $get_sh['shared_post_datetime'] );
-                    echo '<div style="margin: 5px 0;" ><strong><a href="' . esc_url( $post_url ) . '" target="_blank" style="color: #0049b3; text-decoration: none;">' . esc_attr__( 'Check out the shared post ', 'xt-feed-for-linkedin' ) . '</a><br> ( ' . esc_html( $formatted_date ) . ' ) </strong></div>';
+                    if( isset( $get_sh['id'] ) && !is_array( $get_sh['id'] ) && !empty( $get_sh ) ){
+                        $post_url = esc_url( 'https://www.linkedin.com/feed/update/' . $get_sh['id'] );
+                        $formatted_date = gmdate( 'Y-m-d H:i:s', $get_sh['shared_post_datetime'] );
+                        echo '<div style="margin: 5px 0;" ><strong><a href="' . esc_url( $post_url ) . '" target="_blank" style="color: #0049b3; text-decoration: none;">' . esc_attr__( 'Check out the shared post ', 'xt-feed-for-linkedin' ) . '</a><br> ( ' . esc_html( $formatted_date ) . ' ) </strong></div>';
+                    }
                 }
             }else{
                 ?>
@@ -78,6 +80,7 @@ class XT_Feed_Linkedin_Sharing {
                     <div class="if_lt_notice" style="margin-top:15px;"></div>
                 </div>
                 <?php
+                do_action( 'xtlf_save_schedule_post' , $post_id );
             }
         }
     }    
@@ -107,23 +110,44 @@ class XT_Feed_Linkedin_Sharing {
      * @return void
      */
     public function xtfefoli_rander_share_shared_message( $sanitized_message, $post_id ) {
-        // Fetch post data
+        
         $post_title    = get_the_title( $post_id );
         $post_link     = get_permalink( $post_id );
-        $post_excerpt  = wp_trim_words( get_the_excerpt( $post_id ), 1000 );
         $post_author   = get_the_author_meta( 'display_name', get_post_field( 'post_author', $post_id ) );
         $website_title = get_bloginfo( 'name' );
 
-        if( empty( $post_excerpt ) && empty( $post_title ) ){
-            return false;
-        }
+        $total_limit = xtlf_is_pro() ? 2500 : 1000;
 
-        // Replace placeholders in the message
-        $share_message = str_replace(
+        // Base message without excerpt
+        $base_message = str_replace(
             ['[POST_TITLE]', '[POST_LINK]', '[POST_EXCERPT]', '[POST_AUTHOR]', '[WEBSITE_TITLE]'],
-            [$post_title, $post_link, $post_excerpt, $post_author, $website_title],
+            [$post_title, $post_link, '[POST_EXCERPT]', $post_author, $website_title],
             $sanitized_message
         );
+
+        $max_chars_for_excerpt = $total_limit - mb_strlen( $base_message );
+
+        if ( $max_chars_for_excerpt <= 0 ) {
+            return false; 
+        }
+
+        $excerpt_content = get_post_field( 'post_content', $post_id );
+
+        // Strip tags but keep line breaks
+        $excerpt_content = strip_tags( $excerpt_content, '<br><p>' );
+
+        // Replace <p> and <br> with actual newlines
+        $excerpt_content = str_replace( ['<p>', '</p>', '<br>', '<br/>', '<br />'], "\n", $excerpt_content );
+
+        // Trim according to limit
+        $post_excerpt = mb_substr( $excerpt_content, 0, $max_chars_for_excerpt );
+
+        // Optional ellipsis
+        if ( mb_strlen( $excerpt_content ) > $max_chars_for_excerpt ) {
+            $post_excerpt .= '...';
+        }
+
+        $share_message = str_replace( '[POST_EXCERPT]', $post_excerpt, $base_message );
 
         return $share_message;
     }
@@ -134,7 +158,7 @@ class XT_Feed_Linkedin_Sharing {
      * @param int $post_id
      * @return void
      */
-     public function xtfefoli_share_to_linkedin_page_only_text( $message, $post_id, $access_token, $page_id ) {
+    public function xtfefoli_share_to_linkedin_page_only_text( $message, $post_id, $access_token, $page_id ) {
 
         // Clean and decode message
         $message      = wp_strip_all_tags( $message );
@@ -239,7 +263,6 @@ class XT_Feed_Linkedin_Sharing {
                 $error_message = $response_body;
                 return $error_message;
             }else{
-                // error_log( 'LinkedIn API Error: ' . print_r ($response_body, true ) );
                 return false;
             }
         }
@@ -251,11 +274,25 @@ class XT_Feed_Linkedin_Sharing {
      * @param int $post_id
      * @return void
      */
-    public function xtfefoli_share_cpts_in_selected_account( $message, $post_id ){
-        global $xt_feed_for_linkedin;
+    public function xtfefoli_share_cpts_in_selected_account( $message, $post_id, $sharing_type ){
+        global $xt_feed_for_linkedin, $xt_feed_for_linkedin_pro;
         $selected_account = $xt_feed_for_linkedin->common->xtfefoli_get_active_account_token();
 
         if ( empty( $selected_account ) || !is_array( $selected_account ) ){
+            
+            $insert_args = array(
+                'post_id'             => $post_id,
+                'shared_linkedin_id'  => 0,
+                'page_profile_id'     => 0,
+                'sharing_type'        => $sharing_type,
+                'shared_time'         => current_time('mysql'),
+                'status'              => 'failed',
+                'error_message'       => 'Please select at least one account to proceed with sharing.',
+                'message_content'     => $message,
+            );
+
+            $xt_feed_for_linkedin->common->xtfefoli_insert_linkedin_share( $insert_args );
+
             return null;
         }
 
@@ -268,11 +305,77 @@ class XT_Feed_Linkedin_Sharing {
             return null;
         }
 
+        $lf_get_option = xtfefoli_get_options();
+        $image_upload  = false;
+        if ( is_array( $lf_get_option ) && isset( $lf_get_option['xtfefoli_postfimage'] ) ) {
+            $image_upload  = true;
+        }
+
         $shared_post_id  = null;
-        if( $type == 'profile' ){
-            $shared_post_id = $this->xtfefoli_share_to_linkedin_profile_only_text( $message, $post_id, $access_token, $user_id );
-        }elseif( $type == 'page' ){
-            $shared_post_id = $this->xtfefoli_share_to_linkedin_page_only_text( $message, $post_id, $access_token, $page_id );
+        $status          = 'failed';
+        $shared_pid      = null;
+        if ( $type == 'profile' ) {
+            if ( $image_upload && ! empty( $xt_feed_for_linkedin_pro->sharing_pro ) && method_exists( $xt_feed_for_linkedin_pro->sharing_pro, 'xtfefoli_share_to_linkedin_profile_with_image' ) ) {
+                $shared_post_id = $xt_feed_for_linkedin_pro->sharing_pro->xtfefoli_share_to_linkedin_profile_with_image( $message, $post_id, $access_token, $user_id );
+            } else {
+                $shared_post_id = $this->xtfefoli_share_to_linkedin_profile_only_text( $message, $post_id, $access_token, $user_id );
+            }
+
+            if ( isset( $shared_post_id['message'] ) && !empty( $shared_post_id['message'] ) ) {
+                $e_message      = $shared_post_id['message'];
+            }else{
+                $pure_id        = str_replace( 'urn:li:share:', '', $shared_post_id );
+                if( is_numeric( $pure_id ) && $pure_id > 0 ) {
+                    $e_message  = '';
+                    $status     = 'shared';
+                    $shared_pid = $pure_id;
+                }
+            }
+
+            $insert_args = array(
+                'post_id'             => $post_id,
+                'shared_linkedin_id'  => $shared_pid,
+                'page_profile_id'     => $user_id,
+                'sharing_type'        => $sharing_type,
+                'shared_time'         => current_time('mysql'),
+                'status'              => $status,
+                'error_message'       => $e_message,
+                'message_content'     => $message,
+            );
+
+            $xt_feed_for_linkedin->common->xtfefoli_insert_linkedin_share( $insert_args );
+
+        } elseif ( $type == 'page' ) {
+            if ( $image_upload &&method_exists( $xt_feed_for_linkedin_pro->sharing_pro, 'xtfefoli_share_to_linkedin_page_with_image' ) ) {
+                $shared_post_id = $xt_feed_for_linkedin_pro->sharing_pro->xtfefoli_share_to_linkedin_page_with_image( $message, $post_id, $access_token, $page_id );
+            } else {
+                $shared_post_id = $this->xtfefoli_share_to_linkedin_page_only_text( $message, $post_id, $access_token, $page_id );
+            }
+
+            if ( isset( $shared_post_id['message'] ) && !empty( $shared_post_id['message'] ) ) {
+                $e_message      = $shared_post_id['message'];
+            }else{
+                $pure_id        = str_replace( 'urn:li:share:', '', $shared_post_id );
+                if( is_numeric($pure_id) && $pure_id > 0 ) {
+                    $e_message  = '';
+                    $status     = 'shared';
+                    $shared_pid = $pure_id;
+                }
+            }
+
+            $insert_args = array(
+                'post_id'             => $post_id,
+                'shared_linkedin_id'  => $shared_pid,
+                'page_profile_id'     => $page_id,
+                'sharing_type'        => $sharing_type,
+                'shared_time'         => current_time('mysql'),
+                'status'              => $status,
+                'error_message'       => $e_message,
+                'message_content'     => $message,
+            );
+
+            $xt_feed_for_linkedin->common->xtfefoli_insert_linkedin_share( $insert_args );
+
         }
         return $shared_post_id;
     }

@@ -64,13 +64,13 @@ class XT_Feed_Linkedin_User_Company_Data {
                 }
 
                 $user_companies = [];
-                $user_email     = $xtfefoli_linked_account['email'];
-                $access_token   = $xtfefoli_linked_account['access_token'];
+                $user_email     = isset( $xtfefoli_linked_account['email'] ) ? $xtfefoli_linked_account['email'] : '';
+                $access_token   = isset( $xtfefoli_linked_account['access_token'] ) ? $xtfefoli_linked_account['access_token'] : '';
                 $get_lfc_url    = 'https://api.linkedin.com/rest/organizationAcls?q=roleAssignee&role=ADMINISTRATOR&count=100';
                 $response       = wp_remote_get( $get_lfc_url, [
                     'headers'   => [
                         'Authorization' => 'Bearer ' . $access_token,
-                        'LinkedIn-Version' => '202501',
+                        'LinkedIn-Version' => date('Ym'),
                         'X-Restli-Protocol-Version' => '2.0.0',
                         'Accept' => 'application/json',
                     ],
@@ -81,7 +81,7 @@ class XT_Feed_Linkedin_User_Company_Data {
                 }
             
                 $page_response        = json_decode( wp_remote_retrieve_body( $response ), true );
-                $get_companies_ids    = $page_response['elements'];
+                $get_companies_ids    = isset( $page_response['elements'] ) ? $page_response['elements'] : [];
                 
                 foreach( $get_companies_ids as $get_companies_id ){
 
@@ -117,7 +117,7 @@ class XT_Feed_Linkedin_User_Company_Data {
         $lfc_response       = wp_remote_get( $companiesurl, array( 
             'headers'       => array( 
                 'Authorization' => 'Bearer '.$access_token, 
-                'Linkedin-Version' => '202501', 
+                'Linkedin-Version' => date('Ym'), 
                 'X-Restli-Protocol-Version' => '2.0.0' 
             ) 
        ) );

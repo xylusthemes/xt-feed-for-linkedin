@@ -76,7 +76,8 @@ class XT_Feed_Linkedin_Auto_Share {
                     return false;
                 }
 
-                $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id );
+                $sharing_type    = 'auto_publish';
+                $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id, $sharing_type );
             
                 if ( $linkedin_result ) {
             

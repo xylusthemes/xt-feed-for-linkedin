@@ -61,9 +61,47 @@ class LinkedIn_Feedpress_XTFEFOLI_Authorize {
         ];
     
         $login_url = $url . '?' . http_build_query($params);
-    
-        echo '<a class="xtfefoli_button" style="display: flex;align-items: center;color: #fff;" href="' . esc_url($login_url) . '" >Connect LinkedIn</a>';
+
+        // Get LinkedIn accounts from option
+        $linked_accounts = get_option('xtfefoli_linkedin_user_data');
+
+        $disable_button = false;
+
+        if (!empty($linked_accounts)) {
+
+            // PRO version – allow multiple accounts, disable only if limit reached (example: max 5)
+            if ( function_exists('xtlf_is_pro') && xtlf_is_pro() ) {
+                $account_count = is_array($linked_accounts) ? count($linked_accounts) : 1;
+                $max_accounts  = 5; // pro me max accounts limit
+                if ($account_count >= $max_accounts) {
+                    $disable_button = true;
+                }
+            } else {
+                // FREE version – disable if any account exists
+                // Case 1: Single user object
+                if (isset($linked_accounts['access_token']) && !empty($linked_accounts['access_token'])) {
+                    $disable_button = true;
+                }
+                // Case 2: Array of users
+                elseif (is_array($linked_accounts)) {
+                    foreach ($linked_accounts as $account) {
+                        if (isset($account['access_token']) && !empty($account['access_token'])) {
+                            $disable_button = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if ( $disable_button ) {
+            echo '<a class="xtfefoli_button" style="display: flex;align-items: center;color: #fff;opacity: 0.6;pointer-events: none;cursor: not-allowed;" title="LinkedIn account already connected">LinkedIn Connected</a>';
+        } else {
+            echo '<a class="xtfefoli_button" style="display: flex;align-items: center;color: #fff;" href="' . esc_url($login_url) . '" title="Connect your linkedin account">Connect LinkedIn</a>';
+        }
+
     }
+
     
     /**
      * Handle LinkedIn OAuth Callback

@@ -40,7 +40,7 @@ class XT_Feed_Linkedin_Common {
                     <span class="spacer"></span>
                     <span class="page-name"><?php echo esc_attr( $page_title ); ?></span></span>
                     <div class="header-actions" >
-                        <span class="round">
+                        <span class="round" title="Documentation" >
                             <a href="<?php echo esc_url( 'https://docs.xylusthemes.com/docs/xt-feed-for-linkedin/' ); ?>" target="_blank">
                                 <svg viewBox="0 0 20 20" fill="#000000" height="20px" xmlns="http://www.w3.org/2000/svg" class="lf-circle-question-mark">
                                     <path fill-rule="evenodd" clip-rule="evenodd" d="M1.6665 10.0001C1.6665 5.40008 5.39984 1.66675 9.99984 1.66675C14.5998 1.66675 18.3332 5.40008 18.3332 10.0001C18.3332 14.6001 14.5998 18.3334 9.99984 18.3334C5.39984 18.3334 1.6665 14.6001 1.6665 10.0001ZM10.8332 13.3334V15.0001H9.1665V13.3334H10.8332ZM9.99984 16.6667C6.32484 16.6667 3.33317 13.6751 3.33317 10.0001C3.33317 6.32508 6.32484 3.33341 9.99984 3.33341C13.6748 3.33341 16.6665 6.32508 16.6665 10.0001C16.6665 13.6751 13.6748 16.6667 9.99984 16.6667ZM6.6665 8.33341C6.6665 6.49175 8.15817 5.00008 9.99984 5.00008C11.8415 5.00008 13.3332 6.49175 13.3332 8.33341C13.3332 9.40251 12.6748 9.97785 12.0338 10.538C11.4257 11.0695 10.8332 11.5873 10.8332 12.5001H9.1665C9.1665 10.9824 9.9516 10.3806 10.6419 9.85148C11.1834 9.43642 11.6665 9.06609 11.6665 8.33341C11.6665 7.41675 10.9165 6.66675 9.99984 6.66675C9.08317 6.66675 8.33317 7.41675 8.33317 8.33341H6.6665Z" fill="currentColor"></path>
@@ -204,58 +204,90 @@ class XT_Feed_Linkedin_Common {
                                 $email       = $linkedin_user['email'];
                                 $token_expired = isset( $linkedin_user['token_expired'] ) ? (int) $linkedin_user['token_expired'] : '';
                                 $company_id  = isset( $linkedin_user['id'] ) ? $linkedin_user['id'] : '';
+                                $access_token = isset( $linkedin_user['access_token'] ) ? $linkedin_user['access_token'] : '';
                                 $c_timestamp = time();
                                 $is_page     = '';
                                 if ( !empty( $company_id ) ) {
                                     $is_page = ' ( Page ) ';
                                 }
-
-                                ?>
-                                <div class="lf-inner-main-section" id="user_<?php echo esc_attr( $user_sub ); ?>">
-                                    <div class="lf-card-single-row"  >
-                                        <div class="lf-card-single-row-content">
-                                            <div class="lf-profile-info">
-                                                <?php if( !empty( $picture ) ){ ?>
-                                                    <?php // phpcs:disable PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage  ?>
-                                                    <img src="<?php echo esc_url( $picture ); ?>" alt="Profile Picture" class="lf-profile-pic" >
-                                                <?php } ?>
-                                                <div class="lf-user-details">
-                                                    <div>
-                                                        <div class="lf-user-name"><?php echo esc_attr( $full_name ) . esc_attr( $is_page ); ?></div>
-                                                        <div class="lf-user-email"><?php echo esc_attr( $email ); ?></div>
-                                                        <?php
-                                                            if ( !empty( $company_id ) ) {
-                                                                $page_url = "https://www.linkedin.com/company/" . esc_attr( $company_id );
-                                                                ?>
-                                                                <div>
-                                                                    <strong>
-                                                                        <a target="_blank" href="<?php echo esc_url( $page_url ); ?>" style="text-decoration: none;" >
-                                                                            <?php echo esc_html( $company_id ); ?>
-                                                                        </a>
-                                                                    </strong>
-                                                                </div>
-                                                                <?php
-                                                            }
-                                                        ?>
+                                
+                                if ( xtlf_is_pro() || ( !xtlf_is_pro() && !empty( $access_token ) ) ) {
+                                    ?>
+                                    <div class="lf-inner-main-section" id="user_<?php echo esc_attr( $user_sub ); ?>">
+                                        <div class="lf-card-single-row"  >
+                                            <div class="lf-card-single-row-content">
+                                                <div class="lf-profile-info">
+                                                    <?php if( !empty( $picture ) ){ ?>
+                                                        <?php // phpcs:disable PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage  ?>
+                                                        <img src="<?php echo esc_url( $picture ); ?>" alt="Profile Picture" class="lf-profile-pic" >
+                                                    <?php } ?>
+                                                    <div class="lf-user-details">
+                                                        <div>
+                                                            <div class="lf-user-name"><?php echo esc_attr( $full_name ) . esc_attr( $is_page ); ?></div>
+                                                            <div class="lf-user-email"><?php echo esc_attr( $email ); ?></div>
+                                                            <?php
+                                                                if ( !empty( $company_id ) ) {
+                                                                    $page_url = "https://www.linkedin.com/company/" . esc_attr( $company_id );
+                                                                    ?>
+                                                                    <div>
+                                                                        <strong>
+                                                                            <a target="_blank" href="<?php echo esc_url( $page_url ); ?>" style="text-decoration: none;" >
+                                                                                <?php echo esc_html( $company_id ); ?>
+                                                                            </a>
+                                                                        </strong>
+                                                                    </div>
+                                                                    <?php
+                                                                }
+                                                            ?>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="lf-actions">
-                                                <label class="lf-switch">
-                                                    <input type="checkbox" class="lf-status-toggle" data-sub="<?php echo esc_attr( $user_sub ); ?>" data-email="<?php echo esc_attr( $email ); ?>" <?php if( $is_active == 'yes' ){ echo "checked"; } ?> >
-                                                    <span class="lf-slider round"></span>
-                                                </label>
+                                                <div class="lf-actions">
+                                                    <label class="lf-switch">
+                                                        <input type="checkbox" class="lf-status-toggle" data-sub="<?php echo esc_attr( $user_sub ); ?>" data-email="<?php echo esc_attr( $email ); ?>" <?php if( $is_active == 'yes' ){ echo "checked"; } ?> >
+                                                        <span class="lf-slider round" title="Activate/Deactivate Account"></span>
+                                                    </label>
 
-                                                <button title="Delete Account" class="lf-delete-btn"  id="xtfefoli_user_deletion" data-sub="<?php echo esc_attr( $user_sub ); ?>" data-email="<?php echo esc_attr( $email ); ?>">
-                                                    <svg fill="#ff0000" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="24px" height="24px">
-                                                        <path d="M12,2C6.47,2,2,6.47,2,12c0,5.53,4.47,10,10,10s10-4.47,10-10C22,6.47,17.53,2,12,2z M16.707,15.293 c0.391,0.391,0.391,1.023,0,1.414C16.512,16.902,16.256,17,16,17s-0.512-0.098-0.707-0.293L12,13.414l-3.293,3.293 C8.512,16.902,8.256,17,8,17s-0.512-0.098-0.707-0.293c-0.391-0.391-0.391-1.023,0-1.414L10.586,12L7.293,8.707 c-0.391-0.391-0.391-1.023,0-1.414s1.023-0.391,1.414,0L12,10.586l3.293-3.293c0.391-0.391,1.023-0.391,1.414,0 s0.391,1.023,0,1.414L13.414,12L16.707,15.293z"/>
-                                                    </svg>
-                                                </button>
+                                                    <button title="Delete Account" class="lf-delete-btn"  id="xtfefoli_user_deletion" data-sub="<?php echo esc_attr( $user_sub ); ?>" data-email="<?php echo esc_attr( $email ); ?>">
+                                                        <svg fill="#ff0000" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="24px" height="24px">
+                                                            <path d="M12,2C6.47,2,2,6.47,2,12c0,5.53,4.47,10,10,10s10-4.47,10-10C22,6.47,17.53,2,12,2z M16.707,15.293 c0.391,0.391,0.391,1.023,0,1.414C16.512,16.902,16.256,17,16,17s-0.512-0.098-0.707-0.293L12,13.414l-3.293,3.293 C8.512,16.902,8.256,17,8,17s-0.512-0.098-0.707-0.293c-0.391-0.391-0.391-1.023,0-1.414L10.586,12L7.293,8.707 c-0.391-0.391-0.391-1.023,0-1.414s1.023-0.391,1.414,0L12,10.586l3.293-3.293c0.391-0.391,1.023-0.391,1.414,0 s0.391,1.023,0,1.414L13.414,12L16.707,15.293z"/>
+                                                        </svg>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <?php 
+                                    <?php 
+                                }else {
+                                    // Non-Pro & no access token
+                                    ?>
+                                    <div class="lf-inner-main-section">
+                                        <div class="lf-card-single-row" style="padding:30px 20px;display:flex;align-items:center;justify-content:space-between;">
+                                            
+                                            <div class="lf-card-left" style="flex:1;">
+                                                <?php if( !empty($full_name) && !empty($company_id) ) : 
+                                                    $page_url = "https://www.linkedin.com/company/" . esc_attr( $company_id ); ?>
+                                                    <a href="<?php echo esc_url( $page_url ); ?>" target="_blank" style="text-decoration:none; color:#0073b1; font-weight:bold;">
+                                                        <?php echo esc_html( $full_name ); ?>
+                                                    </a>
+                                                <?php endif; ?>
+                                            </div>
+
+                                            <div class="lf-card-center" style="flex:2; text-align:center; color:#d9534f; font-weight:bold;">
+                                                <?php esc_attr_e( 'Upgrade to' ); ?><strong><?php esc_attr_e( ' Pro' ); ?></strong> <?php esc_attr_e( 'to unlock sharing for any post on this page'); ?>
+                                            </div>
+
+                                            <div class="lf-card-right" style="flex:1; text-align:right;">
+                                                <a target="_blank" href="<?php echo esc_url( 'https://xylusthemes.com/plugins/xt-feed-for-linkedin/' ); ?>" class="xtfefoli_button">
+                                                    <?php esc_attr_e( 'Buy Pro' ); ?>
+                                                </a>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <?php
+                                }
                             }
                         ?>
                     </div>
@@ -315,4 +347,93 @@ class XT_Feed_Linkedin_Common {
     
         return null;
     }
+
+    /**
+     * Inserts a new row in the xt_feed_for_linkedin table.
+     * 
+     * @param array $data {
+     *     An associative array of data to be inserted into the table.
+     *     The following keys are accepted:
+     *     @type int    $post_id           The post ID associated with this share.
+     *     @type string  $shared_linkedin_id The ID of the share on LinkedIn.
+     *     @type string  $page_profile_id The ID of the LinkedIn page associated with this share.
+     *     @type string  $sharing_type The type of share (scheduled or manual).
+     *     @type string  $shared_time The time when the share was shared in the format 'Y-m-d H:i:s'.
+     *     @type string  $status The status of the share (pending, shared, failed).
+     *     @type string  $error_message The error message associated with the share.
+     *     @type string  $message_content The content of the share.
+     * }
+     * @return int The ID of the newly inserted row.
+     */
+    public function xtfefoli_insert_linkedin_share( $data = array() ) {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'xt_feed_for_linkedin';
+
+        // Prepare default values
+        $defaults = array(
+            'post_id'             => 0,
+            'shared_linkedin_id'  => null,
+            'page_profile_id'     => '',
+            'sharing_type'        => 'manual',
+            'shared_time'         => null,
+            'status'              => 'pending',
+            'error_message'       => null,
+            'message_content'     => '',
+        );
+
+        $data = wp_parse_args( $data, $defaults );
+
+        $wpdb->insert(
+            $table_name,
+            $data,
+            array(
+                '%d',    // post_id
+                '%s',    // shared_linkedin_id
+                '%s',    // page_profile_id
+                '%s',    // sharing_type
+                '%s',    // shared_time
+                '%s',    // status
+                '%s',    // error_message
+                '%s',    // message_content
+            )
+        );
+        return $wpdb->insert_id;
+    }
+
+    /**
+     * Update a record in the XT Feed for LinkedIn table.
+     *
+     * @param int $id The ID of the record to update.
+     * @param array $data An associative array of data to update.
+     *
+     * @return bool True if the record was updated successfully, false otherwise.
+     */
+    public function xtfefoli_update_linkedin_share( $id, $data = array() ) {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'xt_feed_for_linkedin';
+
+        if ( empty( $id ) ) {
+            return false;
+        }
+
+        return $wpdb->update(
+            $table_name,
+            $data,
+            array( 'id' => $id ),
+            null,
+            array( '%d' )
+        );
+    }
+}
+
+function xtlf_is_pro() {
+	if ( ! function_exists( 'is_plugin_active' ) ) {
+		include_once ABSPATH . 'wp-admin/includes/plugin.php';
+	}
+	if ( is_plugin_active( 'xt-feed-for-linkedin-pro/xt-feed-for-linkedin-pro.php' ) ) {
+		return true;
+	}
+	return false;
 }

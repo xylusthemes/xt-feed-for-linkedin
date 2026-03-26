@@ -171,7 +171,8 @@ class XT_Feed_Linkedin_Ajax {
         }
 
         // Share to LinkedIn Company Page
-        $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id );
+        $sharing_type    = 'manual';
+        $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id, $sharing_type );
 
         if ( isset( $linkedin_result['message'] ) && !empty( $linkedin_result['message'] ) ) {
             $e_message = $linkedin_result['message'];
@@ -243,7 +244,8 @@ class XT_Feed_Linkedin_Ajax {
         }
 
         // Share to LinkedIn Company Page
-        $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id );
+        $sharing_type    = 'manual';
+        $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id, $sharing_type );
 
         if ( $linkedin_result ) {
 
@@ -264,8 +266,8 @@ class XT_Feed_Linkedin_Ajax {
         } else {
             $activate_url = esc_url( admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=general' ) );
             wp_send_json_error( 'No active account was found. Please select an authorized account <strong><a href="' . $activate_url . '" target="_blank">here</a></strong>.' );
-
         }
-    }   
+        wp_die();
+    }
     
 }

@@ -53,7 +53,7 @@ if ( ! class_exists( 'XT_Feed_Linkedin' ) ) :
 				self::$instance = new XT_Feed_Linkedin();
 				self::$instance->setup_constants();
 
-				add_action( 'plugins_loaded', array( self::$instance, 'load_textdomain' ) );
+				add_action( 'plugins_loaded', array( self::$instance, 'xtfefoli_custom_linkedin_table' ) );
 				add_action( 'plugins_loaded', array( self::$instance, 'load_xtfefoli_authorize_class' ), 20 );
 				add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array( self::$instance, 'xtfefoli_setting_doc_links' ) );
 
@@ -142,7 +142,7 @@ if ( ! class_exists( 'XT_Feed_Linkedin' ) ) :
 
 			// Pro plugin Buy now Link.
 			if ( ! defined( 'XTFEFOLI_PLUGIN_BUY_NOW_URL' ) ) {
-				define( 'XTFEFOLI_PLUGIN_BUY_NOW_URL', 'http://xylusthemes.com/plugins/xt-feed-for-linkedin/?utm_source=insideplugin&utm_medium=web&utm_content=sidebar&utm_campaign=freeplugin' );
+				define( 'XTFEFOLI_PLUGIN_BUY_NOW_URL', 'https://xylusthemes.com/plugins/xt-feed-for-linkedin' );
 			}
 		}
 
@@ -161,23 +161,6 @@ if ( ! class_exists( 'XT_Feed_Linkedin' ) ) :
 			require_once XTFEFOLI_PLUGIN_DIR . 'includes/admin/class-xt-feed-for-linkedin-ajax-function.php';
 			require_once XTFEFOLI_PLUGIN_DIR . 'includes/admin/class-xt-feed-for-linkedin-user-company-data.php';
 			require_once XTFEFOLI_PLUGIN_DIR . 'includes/admin/class-xt-feed-for-linkedin-auto-share.php';		
-		}
-
-		/**
-		 * Loads the plugin language files.
-		 *
-		 * @access public
-		 * @since 1.0.0
-		 * @return void
-		 */
-		public function load_textdomain() {
-
-			load_plugin_textdomain(
-				'xt-feed-for-linkedin',
-				false,
-				basename( dirname( __FILE__ ) ) . '/languages'
-			);
-
 		}
 
 		/**
@@ -218,6 +201,41 @@ if ( ! class_exists( 'XT_Feed_Linkedin' ) ) :
 				),
 			);
 			return array_merge( $links, $xtfefoli_setting_doc_link );
+		}
+
+		/**
+		 * Create XT Feed for LinkedIn table in the WordPress database.
+		 *
+		 * @since 1.5
+		 * @return void
+		 */
+		public function xtfefoli_custom_linkedin_table() {
+			global $wpdb;
+			$table_name = $wpdb->prefix . 'xt_feed_for_linkedin';
+
+			if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) != $table_name ) {
+
+				$charset_collate = $wpdb->get_charset_collate();
+				$sql = "CREATE TABLE $table_name (
+					id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+					post_id BIGINT(20) UNSIGNED NOT NULL,
+					shared_linkedin_id BIGINT(20) UNSIGNED NULL,
+					page_profile_id VARCHAR(100) NOT NULL,
+					sharing_type ENUM('manual','scheduled','auto_publish') NOT NULL DEFAULT 'scheduled',
+					shared_time DATETIME NULL,
+					status ENUM('pending','shared','failed') NOT NULL DEFAULT 'pending',
+					error_message TEXT NULL,
+					message_content TEXT NOT NULL,
+					created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+					updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+					PRIMARY KEY (id),
+					KEY post_id (post_id),
+					KEY status (status)
+				) $charset_collate;";
+
+				require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+				dbDelta( $sql );
+			}
 		}
 
 	}
