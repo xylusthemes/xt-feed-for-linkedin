@@ -279,6 +279,20 @@ class XT_Feed_Linkedin_Sharing {
         $selected_account = $xt_feed_for_linkedin->common->xtfefoli_get_active_account_token();
 
         if ( empty( $selected_account ) || !is_array( $selected_account ) ){
+            
+            $insert_args = array(
+                'post_id'             => $post_id,
+                'shared_linkedin_id'  => 0,
+                'page_profile_id'     => 0,
+                'sharing_type'        => $sharing_type,
+                'shared_time'         => current_time('mysql'),
+                'status'              => 'failed',
+                'error_message'       => 'Please select at least one account to proceed with sharing.',
+                'message_content'     => $message,
+            );
+
+            $xt_feed_for_linkedin->common->xtfefoli_insert_linkedin_share( $insert_args );
+
             return null;
         }
 
