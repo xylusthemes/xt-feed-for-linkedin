@@ -3,87 +3,96 @@ Contributors: xylus, rajat1192
 Tags: Linkedin, feed, share, auto share, auto-publish  
 Requires at least: 4.0  
 Requires PHP: 7.0  
-Tested up to: 6.9  
-Stable tag: 1.0.1  
+Tested up to: 7.0
+Stable tag: 1.0.2  
 License: GPLv2 or later  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
 
 XT Feed for LinkedIn auto-shares WordPress posts to LinkedIn with one click, making content distribution easy and boosting your reach effortlessly.
 
-== Description ==  
-🚀 **XT Feed for LinkedIn – The Easiest Way to Share WordPress Content on LinkedIn!**  
-XT Feed for LinkedIn is a simple yet powerful plugin that allows you to automatically share WordPress posts, pages, and custom post types to your LinkedIn profile or business page with just one click. Whether you are a blogger, marketer, or business owner, this plugin helps you streamline content distribution and reach a wider LinkedIn audience effortlessly.
+== Description ==
 
-[Documentation](http://docs.xylusthemes.com/docs/xt-feed-for-linkedin/) | [Plugin Site](https://xylusthemes.com/plugins/xt-feed-for-linkedin/)
+🚀 **XT Feed for LinkedIn – The Ultimate Way to Automate your LinkedIn Presence!**
 
-With XT Feed for LinkedIn, you can:  
-✅ Automatically share posts, pages, and custom post types as soon as they are published.  
-✅ Manually share content directly from the post list or post details page.  
-✅ Customize the post format, message, and visibility settings before sharing.  
-✅ Select which post types should be included or excluded from auto-sharing.  
-✅ Enjoy a simple, user-friendly interface with seamless WordPress integration.  
+XT Feed for LinkedIn is a powerful yet simple plugin that allows you to seamlessly share your WordPress posts, pages, and custom post types (CPTs) to your LinkedIn profile or business page. Whether you're a blogger, marketer, or business owner, this plugin helps you streamline your content distribution, saving you time and boosting your reach on the world's largest professional network.
 
-Boost your content strategy, increase engagement, and save time by automating LinkedIn post sharing directly from WordPress. 🚀  
+### ✨ Free Features
+✅ **Auto-Share on Publish:** Automatically shares your content to LinkedIn the moment you hit "Publish".
+✅ **Manual Sharing:** One-click sharing directly from the WordPress post editor or the post list table.
+✅ **Custom Message Templates:** Define how your posts look on LinkedIn using tags like `[POST_TITLE]`, `[POST_LINK]`, `[POST_EXCERPT]`, `[POST_AUTHOR]`, and `[WEBSITE_TITLE]`.
+✅ **Post Type Control:** Choose exactly which post types (posts, pages, Events, etc.) should be shared.
+✅ **Organization & Profile Support:** Share to your personal LinkedIn profile or any LinkedIn Page you manage.
+✅ **Sharing History:** Keep track of everything you've shared with direct links to your LinkedIn posts.
+✅ **Clean & Professional:** Automatically cleans up your content and strips HTML for a perfect LinkedIn appearance.
 
-💡 **Key Features:**  
-🔹 Auto-share posts upon publishing.  
-🔹 Manual share from the post details page.  
-🔹 Quick share from the post list table.  
-🔹 Easy LinkedIn account connection.  
-🔹 Supports multiple post types, including custom post types.  
+---
 
-🚀 **Installation Guide**  
-✅ Step 1: Download & Install – Upload the plugin files to `/wp-content/plugins/xt-feed-for-linkedin/` or install it directly from the WordPress Plugin Directory.  
-✅ Step 2: Activate the Plugin – Go to **Plugins > Installed Plugins** and activate **XT Feed for LinkedIn**.  
-✅ Step 3: Connect Your LinkedIn Account – Navigate to **XT Feed for LinkedIn > General** and click "Connect Account" to authorize access.  
-✅ Step 4: Configure Your Preferences – Select which post types should be automatically shared to LinkedIn.  
-✅ Step 5: Save & Start Sharing – Click "Save Settings", and you're all set to auto-publish content seamlessly! 🎯  
+### 🔥 Upgrade to PRO for More Power
+Take your LinkedIn strategy to the next level with our **PRO Version**. Get advanced scheduling, image sharing, and more!
 
-== Frequently Asked Questions ==  
-= How do I connect my LinkedIn account? =  
-Simply go to **XT Feed for LinkedIn > General**, click **"Connect Account"**, and follow the LinkedIn authentication steps.  
+🚀 **[Upgrade to XT Feed for LinkedIn PRO](https://xylusthemes.com/plugins/xt-feed-for-linkedin)**
 
-= Can I manually share posts? =  
-Yes! You can manually share posts from the **post details page** or the **post list table**.  
+💎 **Image Sharing (PRO):** Share your posts with their featured images to create eye-catching, high-engagement LinkedIn updates.
+💎 **Scheduled Posting (PRO):** Don't just post now—post later! Schedule your LinkedIn shares for any specific date and time.
+💎 **Advanced Schedule Manager (PRO):** A dedicated interface to view, edit, and manage all your upcoming LinkedIn shares in one place.
+💎 **Action Scheduler Background Processing (PRO):** Reliable sharing that works in the background, ensuring your posts go out even if you're not on your site.
+💎 **Increased Character Limit (PRO):** Share more detailed updates with an expanded limit of 2500 characters (vs 1000 in Free).
+💎 **Dashboard Analytics (PRO):** Get a bird's-eye view of your LinkedIn sharing performance and history.
+💎 **Priority Support & Regular Updates (PRO):** Get expert help when you need it and stay ahead with the latest features.
 
-= Does this plugin support custom post types? =  
-Absolutely! You can enable sharing for **any post type** in the plugin settings.  
+---
 
-= Is this plugin compatible with the Gutenberg editor? =  
-Yes! **XT Feed for LinkedIn** works with **both the Classic Editor and Gutenberg Editor**.  
-
-== External Services ==  
-This plugin allows users to share WordPress blog posts and selected **Custom Post Type (CPT)** data on LinkedIn.  
-By sharing content on LinkedIn, users can expand their reach and increase engagement.  
-
-The plugin uses the **LinkedIn API** to publish posts and links directly on LinkedIn.  
-Posts can be shared either:
-    ➡️ **Manually**, when the user clicks the Share button.  
-    ➡️ **Automatically**, based on a scheduled posting time set by the admin.  
-
-This service is provided using the **LinkedIn API**. For more details, please refer to LinkedIn’s official policies:  
-- [LinkedIn API Terms of Use](https://www.linkedin.com/legal/l/service-terms)  
-- [LinkedIn Privacy Policy](https://www.linkedin.com/legal/privacy-policy)  
-
-== Screenshots ==  
-1. How to Connect LinkedIn Account – Easily authenticate and link your LinkedIn profile with the plugin.  
-2. Sharing Options Settings – Configure auto-sharing preferences, select post types, and manage scheduling.  
-3. Quick Share from Post List – Share posts instantly from the WordPress post list with a single click.  
-4. Manual Share from Post Details – Share individual posts directly from the post editor page.  
+[Documentation](http://docs.xylusthemes.com/docs/xt-feed-for-linkedin/) | [Get PRO Version](https://xylusthemes.com/plugins/xt-feed-for-linkedin/)
 
 == Installation ==
 
-### 🔄 Install via WordPress Admin:
-1. Log in to WordPress and navigate to "Plugins" > "Add New".
-2. Search for "XT Feed for LinkedIn" and click "Install Now".
-3. Click "Activate" to enable the plugin.
+1. Log in to your WordPress admin dashboard.
+2. Navigate to **Plugins > Add New**.
+3. Search for **"XT Feed for LinkedIn"**.
+4. Click **Install Now** and then **Activate**.
+5. Go to **XT Feed for LinkedIn > General** and click **"Connect Account"** to link your LinkedIn profile or page.
+6. Configure your sharing options and you're ready to go!
 
-### 🔄 Manual Installation:
-1. Download "XT Feed for LinkedIn" from WordPress.org.
-2. Unzip the file and upload it to `wp-content/plugins/`.
-3. Go to "Plugins" in WordPress and activate it.
+== Frequently Asked Questions ==
+
+= How do I connect my LinkedIn account? =
+Simply go to **XT Feed for LinkedIn > General**, click **"Connect Account"**, and follow the LinkedIn authentication steps. You can choose to share to your personal Profile or a business Page.
+
+= Can I manually share posts? =
+Yes! You can manually share any post from the **post editor page** or directly from the **post list table**.
+
+= Does this plugin support custom post types? =
+Absolutely! You can enable sharing for **any post type** (like Products, Portfolios, etc.) in the **Sharing Options** settings.
+
+= Is image sharing supported? =
+Image sharing is a **PRO feature**. The free version shares your post as text with a link, while the PRO version includes the featured image for better engagement.
+
+= Can I schedule posts? =
+Scheduling is available in the **PRO version**. It allows you to set a future date and time for each LinkedIn share.
+
+== External Services ==
+
+This plugin uses the **LinkedIn API** to publish content directly to your LinkedIn account.
+By using this plugin, you agree to comply with LinkedIn's official policies:
+- [LinkedIn API Terms of Use](https://www.linkedin.com/legal/l/service-terms)
+- [LinkedIn Privacy Policy](https://www.linkedin.com/legal/privacy-policy)
+
+== Screenshots ==
+
+1. **Dashboard (PRO)** – Get a comprehensive overview of your LinkedIn sharing activities and performance at a glance.
+2. **General Settings** – Effortlessly connect and authorize your LinkedIn profile or business page in just a few clicks.
+3. **Sharing Options** – Take full control of your content by selecting which post types to auto-share and customizing your message templates.
+4. **Set Schedule (PRO)** – Strategically plan your content by scheduling LinkedIn shares for any future date and time.
+5. **Manage Scheduled Shares (PRO)** – Stay organized with a dedicated interface to view, edit, or remove all your upcoming LinkedIn updates.
+6. **Quick Share from Post List** – Instantly share any post directly from your WordPress post listing table with a single click.
+7. **Manual Share from Post Editor** – Customize and share individual posts directly from the WordPress editor while you're creating content.
 
 == Changelog ==  
+
+= 1.0.2 =
+* Added: Fully compatible with the XT Feed for LinkedIn PRO version.
+* Tested: Fully tested with WordPress up to version 7.0.
+* Improved: Performance and overall plugin stability.
 
 = 1.0.1 =
 * Fixed: PHP warnings that appeared in certain conditions.
