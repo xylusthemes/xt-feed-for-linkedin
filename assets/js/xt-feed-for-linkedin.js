@@ -64,8 +64,15 @@
                 },
                 success: function (response) {
                     if (response.success) {
-                        var lfscHtml = `<div class="notice notice-success is-dismissible"><p>Post shared successfully!</p></div>`;
+                        var lfscHtml = `<div class="notice notice-success is-dismissible"><p>${response.data.message || response.data}</p></div>`;
                         $("#if_meta_box_notice").html(lfscHtml);
+                        
+                        if (response.data.history_html) {
+                            if ($('#xtfefoli_shared_history_container').length === 0) {
+                                $('#xtfefoli_history_wrapper').html('<div id="xtfefoli_shared_history_container" style="margin-top: 15px;"><strong>Post Shared History:</strong></div>');
+                            }
+                            $('#xtfefoli_shared_history_container').append(response.data.history_html);
+                        }
                     } else {
                         var lferrorHtml = `<div class="notice notice-error is-dismissible"><p>${response.data}</p></div>`;
                         $("#if_meta_box_notice").html(lferrorHtml);
@@ -141,6 +148,119 @@
                 }
             });
         });
+
+        // Handle Post Edit Tracking (Disable Share Button until saved)
+        function disableShareButton() {
+            var btn = $('#xtfefoli_share_cpt_button');
+            if (!btn.prop('disabled')) {
+                btn.prop('disabled', true).css({ 'opacity': '0.5', 'cursor': 'not-allowed' });
+                if ($('#xtfefoli_save_notice').length === 0) {
+                    btn.after('<div id="xtfefoli_save_notice" style="color: #d63638; margin-top: 8px; font-weight: 500;">Please save or publish the post first to apply your latest changes before sharing.</div>');
+                }
+            }
+        }
+
+        function enableShareButton() {
+            if ($('#xtfefoli_auto_share_loader').length > 0) return;
+            var btn = $('#xtfefoli_share_cpt_button');
+            if (btn.prop('disabled')) {
+                btn.prop('disabled', false).css({ 'opacity': '1', 'cursor': 'pointer' });
+                $('#xtfefoli_save_notice').remove();
+            }
+        }
+
+        // Gutenberg Support
+        if (typeof wp !== 'undefined' && wp.data && wp.data.select('core/editor')) {
+            var wasSaving = false;
+            wp.data.subscribe(function() {
+                var isDirty = wp.data.select('core/editor').isEditedPostDirty();
+                var isSaving = wp.data.select('core/editor').isSavingPost();
+                
+                if (isDirty || isSaving) {
+                    disableShareButton();
+                } else {
+                    enableShareButton();
+                }
+
+                // Detect when saving completes
+                if (wasSaving && !isSaving) {
+                    var currentStatus = wp.data.select('core/editor').getCurrentPost().status;
+                    if (currentStatus === 'publish') {
+                        // Add loader before the 8 second timeout
+                        if ($('#xtfefoli_auto_share_loader').length === 0) {
+                            $('#xtfefoli_share_cpt_button').after('<div id="xtfefoli_auto_share_loader" style="color: #2271b1; margin-top: 8px; font-weight: 500;">Post sharing... just a little bit more time... <span class="spinner is-active" style="float:none; margin: 0 5px;"></span></div>');
+                            $('#xtfefoli_share_cpt_button').prop('disabled', true).css({ 'opacity': '0.5', 'cursor': 'not-allowed' });
+                        }
+
+                        // Poll every 5 seconds for the background auto-share cron to finish, up to 6 times (30s max)
+                        let attempts = 0;
+                        let pollInterval = setInterval(function() {
+                            attempts++;
+                            let postID = $('#post_ID').val();
+                            let nonce = $('#xtfefoli_linkedin_feedpress_meta_box_nonce').val();
+                            
+                            if (postID && nonce) {
+                                $.post(ajaxurl, {
+                                    action: 'xtfefoli_get_sharing_history',
+                                    post_id: postID,
+                                    xtfefoli_share_security: nonce
+                                }, function(response) {
+                                    // If we got success (data) OR an error message (failed share), stop polling
+                                    if ((response.success && response.data && response.data.html) || 
+                                        (!response.success && response.data && response.data.message)) {
+                                        
+                                        clearInterval(pollInterval);
+                                        $('#xtfefoli_auto_share_loader').remove();
+                                        $('#xtfefoli_share_cpt_button').prop('disabled', false).css({ 'opacity': '1', 'cursor': 'pointer' });
+                                        
+                                        if (response.success && response.data && response.data.html) {
+                                            $('#xtfefoli_history_wrapper').html(response.data.html);
+                                        } else {
+                                            // Show error notice if sharing failed
+                                            var lferrorHtml = `<div class="notice notice-error is-dismissible"><p>${response.data.message}</p></div>`;
+                                            $("#if_meta_box_notice").html(lferrorHtml);
+                                            setTimeout(function () {
+                                                $("#if_meta_box_notice").fadeOut("slow", function () {
+                                                    $(this).html("").show();
+                                                });
+                                            }, 6000);
+                                        }
+                                    } else if (attempts >= 6) {
+                                        // Timeout reached, stop polling
+                                        clearInterval(pollInterval);
+                                        $('#xtfefoli_auto_share_loader').remove();
+                                        $('#xtfefoli_share_cpt_button').prop('disabled', false).css({ 'opacity': '1', 'cursor': 'pointer' });
+                                    }
+                                }).fail(function() {
+                                    if (attempts >= 6) {
+                                        clearInterval(pollInterval);
+                                        $('#xtfefoli_auto_share_loader').remove();
+                                        $('#xtfefoli_share_cpt_button').prop('disabled', false).css({ 'opacity': '1', 'cursor': 'pointer' });
+                                    }
+                                });
+                            } else {
+                                clearInterval(pollInterval);
+                                $('#xtfefoli_auto_share_loader').remove();
+                                $('#xtfefoli_share_cpt_button').prop('disabled', false).css({ 'opacity': '1', 'cursor': 'pointer' });
+                            }
+                        }, 5000);
+                    }
+                }
+                wasSaving = isSaving;
+            });
+        } else {
+            // Classic Editor Support
+            $('#title, #content').on('input change', function() {
+                disableShareButton();
+            });
+            // Classic editor featured image remove/add
+            $(document).ajaxSuccess(function(e, xhr, settings) {
+                if (settings.data && typeof settings.data === 'string' && settings.data.includes('action=set-post-thumbnail')) {
+                    disableShareButton();
+                }
+            });
+        }
+
 	});
 
 })( jQuery );

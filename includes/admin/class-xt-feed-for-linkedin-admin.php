@@ -275,13 +275,7 @@ class XT_Feed_Linkedin_Admin {
 		$title              = $post->post_title;
 		$description        = $post->post_content;
 
-		if ( $title == '' || $description == '' ) {
-			echo '<div style="margin: 5px 0 0 5px; color: #0073aa; font-weight: bold;">
-				' . esc_html__( 'Title or Description should not be empty. Please save the post first before using this feature.', 'xt-feed-for-linkedin' ) . '
-				</div>';
-			return false;
-		}
-			
+
 			
 		$original_lfgsm    = esc_textarea("[POST_TITLE]\n\n Read more: [POST_LINK]\n\n [POST_EXCERPT]\n\n By [POST_AUTHOR] |  [WEBSITE_TITLE]");
 		$lfgsm_option      = get_option( 'xtfefoli_global_sharing_message', $original_lfgsm );
@@ -322,11 +316,11 @@ class XT_Feed_Linkedin_Admin {
 			</div>
 			<div id="if_meta_box_notice" style="margin-top:15px;"></div>
 		</div>
-		<div style="margin:10px;">
+		<div id="xtfefoli_history_wrapper" style="margin:10px;">
 			<?php 
 				if( !empty( $get_shared_histories ) ){
 					?>
-					<div style="margin-top: 15px;">
+					<div id="xtfefoli_shared_history_container" style="margin-top: 15px;">
 						<strong><?php esc_attr_e( 'Post Shared History:', 'xt-feed-for-linkedin' ); ?></strong>
 						<?php
 						foreach( $get_shared_histories as $get_sh ){
@@ -358,13 +352,10 @@ class XT_Feed_Linkedin_Admin {
 		if ( isset( $_POST['xtfefoli_so_action'] ) && 'xtfefoli_save_so_settings' === sanitize_text_field( wp_unslash( $_POST['xtfefoli_so_action'] ) ) && check_admin_referer( 'xtfefoli_so_setting_form_nonce_action', 'xtfefoli_so_setting_form_nonce' ) ) { // input var okay.
             $xtfefoli_global_message = isset( $_POST['xtfefoli_global_sharing_message'] ) ? wp_kses_post( wp_unslash( $_POST['xtfefoli_global_sharing_message'] ) ) : '';
 			$xtfefoli_so_options     = isset( $_POST['xtfefoli_sharing_option'] ) ? $this->sanitize_recursive( wp_unslash( $_POST['xtfefoli_sharing_option'] ) ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			$xtfefoli_gsm_is_update  = update_option( 'xtfefoli_global_sharing_message', $xtfefoli_global_message );
-			$if_is_update            = update_option( XTFEFOLI_OPTIONS, $xtfefoli_so_options );
-			if ( $xtfefoli_gsm_is_update || $if_is_update ) {
-				$xtfefoli_success_msg[] = __( 'Save Setting Successfully.', 'xt-feed-for-linkedin' );
-			} else {
-				$xtfefoli_errors[] = __( 'Something went wrong! please try again.', 'xt-feed-for-linkedin' );
-			}
+			update_option( 'xtfefoli_global_sharing_message', $xtfefoli_global_message );
+			update_option( XTFEFOLI_OPTIONS, $xtfefoli_so_options );
+			
+			$xtfefoli_success_msg[] = __( 'Save Setting Successfully.', 'xt-feed-for-linkedin' );
 		}
 	}
 

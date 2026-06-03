@@ -66,11 +66,10 @@ class XT_Feed_Linkedin_User_Company_Data {
                 $user_companies = [];
                 $user_email     = isset( $xtfefoli_linked_account['email'] ) ? $xtfefoli_linked_account['email'] : '';
                 $access_token   = isset( $xtfefoli_linked_account['access_token'] ) ? $xtfefoli_linked_account['access_token'] : '';
-                $get_lfc_url    = 'https://api.linkedin.com/rest/organizationAcls?q=roleAssignee&role=ADMINISTRATOR&count=100';
+                $get_lfc_url    = 'https://api.linkedin.com/v2/organizationAcls?q=roleAssignee&role=ADMINISTRATOR&count=100';
                 $response       = wp_remote_get( $get_lfc_url, [
                     'headers'   => [
                         'Authorization' => 'Bearer ' . $access_token,
-                        'LinkedIn-Version' => date('Ym'),
                         'X-Restli-Protocol-Version' => '2.0.0',
                         'Accept' => 'application/json',
                     ],
@@ -113,11 +112,10 @@ class XT_Feed_Linkedin_User_Company_Data {
     public function xtfefoli_get_users_companies( $xtfefoli_companies_list_ids, $access_token ){
         
         $xtfefoli_companies_ids   = implode( ',', $xtfefoli_companies_list_ids );
-        $companiesurl       = 'https://api.linkedin.com/rest/organizations?ids=List('.$xtfefoli_companies_ids.')';
+        $companiesurl       = 'https://api.linkedin.com/v2/organizations?ids=List('.$xtfefoli_companies_ids.')';
         $lfc_response       = wp_remote_get( $companiesurl, array( 
             'headers'       => array( 
                 'Authorization' => 'Bearer '.$access_token, 
-                'Linkedin-Version' => date('Ym'), 
                 'X-Restli-Protocol-Version' => '2.0.0' 
             ) 
        ) );

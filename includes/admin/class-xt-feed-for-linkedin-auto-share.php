@@ -24,6 +24,7 @@ class XT_Feed_Linkedin_Auto_Share {
 
     public function __construct() {
         add_action( 'transition_post_status', array( $this, 'xtfefoli_auto_share_on_linkedin' ), 10, 3 );
+        add_action( 'xtfefoli_async_auto_share_event', array( $this, 'xtfefoli_process_auto_share' ) );
     }
 
     /**
@@ -53,48 +54,65 @@ class XT_Feed_Linkedin_Auto_Share {
 
         // If the post is being published for the first time (not previously published)
         if ( $old_status !== 'publish' && $new_status === 'publish'  ) {
-
+            
             if( empty( $xtfefoli_bddspol ) ){
-
-                $check_post_shared  = get_post_meta( $post_id, '_xtfefoli_sended_on_linkedin', false );
-                $post_share_message = get_post_meta( $post_id, '_xtfefoli_share_message', true );
-            
-                if( empty( $post_share_message ) ){
-                    $global_sharing_message = get_option( 'xtfefoli_global_sharing_message' );
-                    if( !empty( $global_sharing_message ) ){
-                        $sanitized_message  = wp_kses_post( $global_sharing_message );
-                    }else{
-                        $sanitized_message  = wp_kses_post( "[POST_TITLE]\n\n Read more: [POST_LINK]\n\n [POST_EXCERPT]\n\n By [POST_AUTHOR] |  [WEBSITE_TITLE]" );
-                    }
-                }else{
-                    $sanitized_message  = $post_share_message;
-                }
-            
-                //Get shared message with proper layput
-                $share_message   = $xt_feed_for_linkedin->sharing->xtfefoli_rander_share_shared_message( $sanitized_message, $post_id );
-                if ( $share_message === false ) { 
-                    return false;
-                }
-
-                $sharing_type    = 'auto_publish';
-                $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id, $sharing_type );
-            
-                if ( $linkedin_result ) {
-            
-                    $existing_data = get_post_meta( $post_id, '_xtfefoli_sended_on_linkedin', true );
-            
-                    // Ensure it's an array
-                    if ( ! is_array( $existing_data ) ) { $existing_data = []; }
-                    $existing_data[] = array( 'id' => $linkedin_result, 'shared_post_datetime' => time() );
-            
-                    //save/update post meta
-                    update_post_meta( $post_id, '_xtfefoli_sended_on_linkedin', $existing_data );
-                    update_post_meta( $post_id, '_xtfefoli_shared_on_linkedin', 1 );
-                    update_post_meta( $post_id, '_xtfefoli_dont_share_post_linkedin', 1 );
-                    update_post_meta( $post_id, '_xtfefoli_share_message', $sanitized_message );
-            
-                }
+                // Schedule the auto-share to run shortly after to ensure Gutenberg saves all post meta (like thumbnail)
+                wp_schedule_single_event( time() + 5, 'xtfefoli_async_auto_share_event', array( $post_id ) );
             }
+        }
+    }
+
+    /**
+     * Process Auto share post on LinkedIn via Cron
+     *
+     * @since    1.0.0
+     */
+    public function xtfefoli_process_auto_share( $post_id ) {
+        global $xt_feed_for_linkedin;
+        
+        $check_post_shared  = get_post_meta( $post_id, '_xtfefoli_sended_on_linkedin', true );
+        
+        // Prevent duplicate sharing
+        if ( !empty( $check_post_shared ) ) {
+            return;
+        }
+
+        $post_share_message = get_post_meta( $post_id, '_xtfefoli_share_message', true );
+    
+        if( empty( $post_share_message ) ){
+            $global_sharing_message = get_option( 'xtfefoli_global_sharing_message' );
+            if( !empty( $global_sharing_message ) ){
+                $sanitized_message  = wp_kses_post( $global_sharing_message );
+            }else{
+                $sanitized_message  = wp_kses_post( "[POST_TITLE]\n\n Read more: [POST_LINK]\n\n [POST_EXCERPT]\n\n By [POST_AUTHOR] |  [WEBSITE_TITLE]" );
+            }
+        }else{
+            $sanitized_message  = $post_share_message;
+        }
+    
+        //Get shared message with proper layout
+        $share_message   = $xt_feed_for_linkedin->sharing->xtfefoli_rander_share_shared_message( $sanitized_message, $post_id );
+        if ( $share_message === false ) { 
+            return;
+        }
+
+        $sharing_type    = 'auto_publish';
+        $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id, $sharing_type );
+    
+        if ( $linkedin_result && !isset( $linkedin_result['message'] ) ) {
+    
+            $existing_data = get_post_meta( $post_id, '_xtfefoli_sended_on_linkedin', true );
+    
+            // Ensure it's an array
+            if ( ! is_array( $existing_data ) ) { $existing_data = []; }
+            $existing_data[] = array( 'id' => $linkedin_result, 'shared_post_datetime' => time() );
+    
+            //save/update post meta
+            update_post_meta( $post_id, '_xtfefoli_sended_on_linkedin', $existing_data );
+            update_post_meta( $post_id, '_xtfefoli_shared_on_linkedin', 1 );
+            update_post_meta( $post_id, '_xtfefoli_dont_share_post_linkedin', 1 );
+            update_post_meta( $post_id, '_xtfefoli_share_message', $sanitized_message );
+    
         }
     }
 }
