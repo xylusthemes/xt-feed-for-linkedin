@@ -193,7 +193,7 @@ class XT_Feed_Linkedin_Sharing {
         ]);
     
         if ( is_wp_error( $response ) ) {
-            return false;
+            return array('message' => $response->get_error_message());
         }
     
         $response_body = json_decode( wp_remote_retrieve_body( $response ), true );
@@ -252,7 +252,7 @@ class XT_Feed_Linkedin_Sharing {
         ]);
     
         if ( is_wp_error( $response ) ) {
-            return false;
+            return array('message' => $response->get_error_message());
         }
     
         $response_body = json_decode(wp_remote_retrieve_body( $response ), true);

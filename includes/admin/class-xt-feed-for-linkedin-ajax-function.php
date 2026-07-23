@@ -26,6 +26,7 @@ class XT_Feed_Linkedin_Ajax {
         add_action('wp_ajax_xtfefoli_update_user_status', array( $this, 'xtfefoli_update_user_status_callback' ) );
         add_action('wp_ajax_xtfefoli_share_to_linkedin', array( $this, 'xtfefoli_share_to_linkedin_function' ) );
         add_action('wp_ajax_xtfefoli_share_to_linkedin_lt', array( $this, 'xtfefoli_share_lt_to_linkedin_function' ) );
+        add_action('wp_ajax_xtfefoli_get_sharing_history', array( $this, 'xtfefoli_get_sharing_history_callback' ) );
 	}
     
     /**
@@ -150,16 +151,10 @@ class XT_Feed_Linkedin_Ajax {
         $xtfefoli_post_type      = isset( $_POST['xtfefoli_post_type'] ) ? sanitize_text_field( wp_unslash( $_POST['xtfefoli_post_type'] ) ) : 'post';
         $sanitized_message = isset( $_POST['share_message'] ) ? wp_kses_post( wp_unslash( $_POST['share_message'] ) ) : '';
 
-        if ( !$post_id ) {
-            $post_id = wp_insert_post( [
-                'post_title'   => '',
-                'post_status'  => 'publish',
-                'post_type'    => $xtfefoli_post_type,
-            ] );
-        }
-
-        if ( !$post_id || is_wp_error( $post_id ) ) {
-            wp_send_json_error('Failed to create post.');
+        $post = get_post( $post_id );
+        if ( !$post_id || !$post || $post->post_status === 'auto-draft' || ( empty( $post->post_title ) && empty( $post->post_content ) ) ) {
+            wp_send_json_error( 'Title or Description should not be empty. Please save the post first before using this feature.' );
+            exit;
         }
 
         //Get shared message with proper layput
@@ -200,7 +195,11 @@ class XT_Feed_Linkedin_Ajax {
                 update_post_meta( $post_id, '_xtfefoli_dont_share_post_linkedin', 1 );
                 update_post_meta( $post_id, '_xtfefoli_share_message', $pshare_message );
 
-                wp_send_json_success( 'Post shared successfully on LinkedIn.' );
+                $post_url = esc_url( 'https://www.linkedin.com/feed/update/' . $linkedin_result );
+                $formatted_date = gmdate( 'Y-m-d H:i:s', time() );
+                $history_html = '<div style="margin: 5px 0 0 5px;"><strong><a href="' . $post_url . '" target="_blank" style="color: #0049b3; text-decoration: none;">Check out the shared post </a> ( ' . $formatted_date . ' ) </strong></div>';
+
+                wp_send_json_success( array( 'message' => 'Post shared successfully on LinkedIn.', 'history_html' => $history_html ) );
             } else {
                 $activate_url = esc_url( admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=general' ) );
                 wp_send_json_error( 'No active account was found. Please select an authorized account <strong><a href="' . $activate_url . '" target="_blank">here</a></strong>.' );
@@ -247,7 +246,16 @@ class XT_Feed_Linkedin_Ajax {
         $sharing_type    = 'manual';
         $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id, $sharing_type );
 
-        if ( $linkedin_result ) {
+        if ( isset( $linkedin_result['message'] ) && !empty( $linkedin_result['message'] ) ) {
+            $e_message = $linkedin_result['message'];
+            if ( strpos( $e_message, 'Content is a duplicate' ) !== false ) {
+                $clean_result = 'This Content is already shared on LinkedIn. You may share it again after a short wait.';
+            } else {
+                $clean_result = 'An error occurred: ' . $e_message;
+            }
+            wp_send_json_error( $clean_result );
+            exit;
+        } else if ( $linkedin_result ) {
 
             $existing_data = get_post_meta( $post_id, '_xtfefoli_sended_on_linkedin', true );
 
@@ -268,6 +276,50 @@ class XT_Feed_Linkedin_Ajax {
             wp_send_json_error( 'No active account was found. Please select an authorized account <strong><a href="' . $activate_url . '" target="_blank">here</a></strong>.' );
         }
         wp_die();
+    }
+    
+    /**
+     * Get sharing history HTML
+     * 
+     * @since    1.0.0
+     */
+    public function xtfefoli_get_sharing_history_callback() {
+        check_ajax_referer( 'xtfefoli_linkedin_feedpress_meta_box_nonce', 'xtfefoli_share_security' );
+        $post_id = isset( $_POST['post_id'] ) ? intval( wp_unslash( $_POST['post_id'] ) ) : 0;
+        if ( !$post_id ) {
+            wp_send_json_error();
+        }
+        $get_shared_histories = get_post_meta( $post_id, '_xtfefoli_sended_on_linkedin', true );
+        if( !empty( $get_shared_histories ) ){
+            ob_start();
+            ?>
+            <div id="xtfefoli_shared_history_container" style="margin-top: 15px;">
+                <strong><?php esc_attr_e( 'Post Shared History:', 'xt-feed-for-linkedin' ); ?></strong>
+                <?php
+                foreach( $get_shared_histories as $get_sh ){
+                    if( isset( $get_sh['id'] ) && !is_array( $get_sh['id'] ) && !empty( $get_sh['id'] ) ){
+                        $post_url = esc_url( 'https://www.linkedin.com/feed/update/' . $get_sh['id'] );
+                        $formatted_date = gmdate( 'Y-m-d H:i:s', $get_sh['shared_post_datetime'] );				
+                        echo '<div style="margin: 5px 0 0 5px;">
+                                <strong><a href="' . esc_url( $post_url ) . '" target="_blank" style="color: #0049b3; text-decoration: none;">' . esc_attr__( 'Check out the shared post ', 'xt-feed-for-linkedin' ) . '</a> ( ' . esc_html( $formatted_date ) . ' ) </strong>
+                                </div>';
+                    }
+                }
+                ?>
+            </div>
+            <?php
+            $html = ob_get_clean();
+            wp_send_json_success( array( 'html' => $html ) );
+        } else {
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'xt_feed_for_linkedin';
+            $error_log = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE post_id = %d ORDER BY id DESC LIMIT 1", $post_id ) );
+            if ( $error_log && $error_log->status === 'failed' ) {
+                wp_send_json_error( array( 'message' => 'Auto share failed: ' . $error_log->error_message ) );
+            } else {
+                wp_send_json_error();
+            }
+        }
     }
     
 }
