@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: XT Feed for LinkedIn 1.0.2\n"
+"Project-Id-Version: XT Feed for LinkedIn 1.0.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/xt-feed-for-linkedin\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-03T06:41:33+00:00\n"
+"POT-Creation-Date: 2026-07-27T11:36:47+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: xt-feed-for-linkedin\n"
@@ -18,8 +18,8 @@ msgstr ""
 #: xt-feed-for-linkedin.php
 #: includes/admin/class-xt-feed-for-linkedin-admin.php:65
 #: includes/admin/class-xt-feed-for-linkedin-admin.php:70
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:255
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:475
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:299
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:523
 msgid "XT Feed for LinkedIn"
 msgstr ""
 
@@ -44,64 +44,73 @@ msgid "https://xylusthemes.com"
 msgstr ""
 
 #: includes/admin/class-xt-feed-for-linkedin-admin.php:71
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:125
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:129
 #: templates/admin/xt-feed-for-linkedin-sharing-options.php:89
 msgid "Sharing Options"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:72
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:129
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:73
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:133
+msgid "Feed Builder"
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:75
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:137
 msgid "Set Schedule Posts"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:76
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:135
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:79
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:143
 msgid "Manage Scheduled Shares"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:78
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:142
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:81
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:150
 msgid "License"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:80
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:149
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:83
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:157
 msgid "Support & Help"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:122
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:126
 msgid "General"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:303
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:347
 msgid "Don't Share This Post"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:309
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:353
 msgid "Share Message"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:314
-#: includes/admin/class-xt-feed-for-linkedin-sharing.php:78
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:357
+msgid "Share Account"
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:362
+#: includes/admin/class-xt-feed-for-linkedin-sharing.php:83
 msgid "Share Now"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:324
-#: includes/admin/class-xt-feed-for-linkedin-ajax-function.php:297
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:372
+#: includes/admin/class-xt-feed-for-linkedin-ajax-function.php:354
 msgid "Post Shared History:"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:331
-#: includes/admin/class-xt-feed-for-linkedin-ajax-function.php:304
-#: includes/admin/class-xt-feed-for-linkedin-sharing.php:70
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:379
+#: includes/admin/class-xt-feed-for-linkedin-ajax-function.php:361
+#: includes/admin/class-xt-feed-for-linkedin-sharing.php:71
 msgid "Check out the shared post "
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:358
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:406
 msgid "Save Setting Successfully."
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:479
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:527
 msgid "Click here"
 msgstr ""
 
@@ -154,11 +163,28 @@ msgstr ""
 msgid "WP Bulk Delete"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-common.php:189
+#: includes/admin/class-xt-feed-for-linkedin-common.php:203
 msgid "Authorized Accounts"
 msgstr ""
 
-#: templates/admin/xt-feed-for-linkedin-general.php:19
+#: includes/admin/class-xt-feed-for-linkedin-common.php:340
+#: includes/admin/class-xt-feed-for-linkedin-common.php:556
+msgid "Page"
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-common.php:546
+msgid "Default Active Account"
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-common.php:560
+msgid "Profile"
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-lf-authorize.php:181
+msgid "Authorization failed or was cancelled."
+msgstr ""
+
+#: templates/admin/xt-feed-for-linkedin-general.php:28
 msgid "Connect Accounts"
 msgstr ""
 
@@ -166,63 +192,79 @@ msgstr ""
 msgid "Your Page / Profile Name"
 msgstr ""
 
-#: templates/admin/xt-feed-for-linkedin-sharing-options.php:97
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:98
 msgid "Default Share Message"
 msgstr ""
 
-#: templates/admin/xt-feed-for-linkedin-sharing-options.php:102
-msgid "Default Share Message Keywords"
-msgstr ""
-
-#: templates/admin/xt-feed-for-linkedin-sharing-options.php:104
-msgid "[POST_TITLE]"
-msgstr ""
-
-#: templates/admin/xt-feed-for-linkedin-sharing-options.php:105
-msgid "[POST_LINK]"
-msgstr ""
-
-#: templates/admin/xt-feed-for-linkedin-sharing-options.php:106
-msgid "[POST_EXCERPT]"
-msgstr ""
-
-#: templates/admin/xt-feed-for-linkedin-sharing-options.php:107
-msgid "[POST_AUTHOR]"
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:101
+msgid "Configure the default template text for post shares. Use tags like [POST_TITLE] to pull post metadata dynamically."
 msgstr ""
 
 #: templates/admin/xt-feed-for-linkedin-sharing-options.php:108
-msgid "[WEBSITE_TITLE]"
+msgid "Default Share Message Keywords"
+msgstr ""
+
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:110
+msgid "[POST_TITLE]"
+msgstr ""
+
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:111
+msgid "[POST_LINK]"
+msgstr ""
+
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:112
+msgid "[POST_EXCERPT]"
+msgstr ""
+
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:113
+msgid "[POST_AUTHOR]"
 msgstr ""
 
 #: templates/admin/xt-feed-for-linkedin-sharing-options.php:114
+msgid "[WEBSITE_TITLE]"
+msgstr ""
+
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:120
 msgid "LinkedIn Preview"
 msgstr ""
 
-#: templates/admin/xt-feed-for-linkedin-sharing-options.php:116
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:122
 msgid "Your sharing message will look like this on LinkedIn (This is only for preview purposes)."
 msgstr ""
 
-#: templates/admin/xt-feed-for-linkedin-sharing-options.php:173
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:180
 msgid "Allow To Share Post Type"
 msgstr ""
 
-#: templates/admin/xt-feed-for-linkedin-sharing-options.php:203
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:183
+msgid "Toggle which WordPress post types can be shared to LinkedIn. When allowed, a meta box will appear on the editing screen of these post types."
+msgstr ""
+
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:215
 msgid "Sharing Post Featured Image"
 msgstr ""
 
-#: templates/admin/xt-feed-for-linkedin-sharing-options.php:213
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:226
 msgid "Share Post Featured Image"
 msgstr ""
 
-#: templates/admin/xt-feed-for-linkedin-sharing-options.php:234
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:229
+msgid "Check this to share the post's featured image to LinkedIn along with the share message."
+msgstr ""
+
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:252
 msgid "By default don't auto share posts on LinkedIn"
 msgstr ""
 
-#: templates/admin/xt-feed-for-linkedin-sharing-options.php:240
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:260
 msgid "By default don't share posts on LinkedIn"
 msgstr ""
 
-#: templates/admin/xt-feed-for-linkedin-sharing-options.php:249
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:263
+msgid "By default, post sharing checkbox on new posts is unchecked. Enable this if you only want to manually select posts to share."
+msgstr ""
+
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:274
 msgid "Save Settings"
 msgstr ""
 
