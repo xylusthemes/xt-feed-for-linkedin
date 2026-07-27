@@ -94,7 +94,13 @@ $xtfefoli_postfimage  = isset( $xtfefoli_so_options['xtfefoli_postfimage'] ) ? $
                 <div style="display: flex;flex-direction: row;gap:30px;flex-wrap:wrap;" >
                     <div style="flex: 1; min-width: 300px;" >
                         <div class="xtfefoli_custom-linkedin-metabox-setting" style="margin-bottom: 20px;">
-                            <label for="xtfefoli_custom-share-message" style="display: block; font-weight: bold; margin-bottom: 8px;"><?php esc_attr_e( 'Default Share Message', 'xt-feed-for-linkedin' ); ?></label>
+                            <label for="xtfefoli_custom-share-message" style="display: inline-flex; align-items: center; font-weight: bold; margin-bottom: 8px;">
+                                <?php esc_attr_e( 'Default Share Message', 'xt-feed-for-linkedin' ); ?>
+                                <span class="xtfefoli-tooltip-wrap">
+                                    <span class="xtfefoli-tooltip-icon">?</span>
+                                    <span class="xtfefoli-tooltip-text"><?php esc_html_e( 'Configure the default template text for post shares. Use tags like [POST_TITLE] to pull post metadata dynamically.', 'xt-feed-for-linkedin' ); ?></span>
+                                </span>
+                            </label>
                             <textarea  rows="8" name="xtfefoli_global_sharing_message" id="xtfefoli_custom-share-message" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-family: inherit;"><?php echo esc_textarea( $lfgsm_option ); ?></textarea>
                         </div>
                         
@@ -169,8 +175,14 @@ $xtfefoli_postfimage  = isset( $xtfefoli_so_options['xtfefoli_postfimage'] ) ? $
             <div class="header">
                 <div class="text">
                     <div class="header-icon"></div>
-                    <div class="header-title">
-                        <span><?php esc_attr_e( 'Allow To Share Post Type', 'xt-feed-for-linkedin' ); ?></span>
+                    <div class="header-title" >
+                        <span style="display: inline-flex; align-items: center;">
+                            <?php esc_attr_e( 'Allow To Share Post Type', 'xt-feed-for-linkedin' ); ?>
+                            <span class="xtfefoli-tooltip-wrap">
+                                <span class="xtfefoli-tooltip-icon">?</span>
+                                <span class="xtfefoli-tooltip-text"><?php esc_html_e( 'Toggle which WordPress post types can be shared to LinkedIn. When allowed, a meta box will appear on the editing screen of these post types.', 'xt-feed-for-linkedin' ); ?></span>
+                            </span>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -210,7 +222,13 @@ $xtfefoli_postfimage  = isset( $xtfefoli_so_options['xtfefoli_postfimage'] ) ? $
                         ?>
                         <span>
                             <input type="checkbox" <?php if( $xtfefoli_postfimage == 'on' ){ echo 'checked'; }; ?> name="xtfefoli_sharing_option[xtfefoli_postfimage]" />
-                            <?php esc_attr_e( 'Share Post Featured Image', 'xt-feed-for-linkedin' ); ?>
+                            <span style="display: inline-flex; align-items: center; vertical-align: middle;">
+                                <?php esc_attr_e( 'Share Post Featured Image', 'xt-feed-for-linkedin' ); ?>
+                                <span class="xtfefoli-tooltip-wrap">
+                                    <span class="xtfefoli-tooltip-icon">?</span>
+                                    <span class="xtfefoli-tooltip-text"><?php esc_html_e( 'Check this to share the post\'s featured image to LinkedIn along with the share message.', 'xt-feed-for-linkedin' ); ?></span>
+                                </span>
+                            </span>
                         </span>
                         <?php 
                     }else{ 
@@ -237,7 +255,14 @@ $xtfefoli_postfimage  = isset( $xtfefoli_so_options['xtfefoli_postfimage'] ) ? $
             </div>
             <div class="content">
                 <div>
-                    <input type="checkbox" <?php if( $xtfefoli_bddspol == 'on' ){ echo 'checked'; }; ?> name="xtfefoli_sharing_option[xtfefoli_bddspol]"  ><?php esc_attr_e( 'By default don\'t share posts on LinkedIn', 'xt-feed-for-linkedin' ); ?>
+                    <input type="checkbox" <?php if( $xtfefoli_bddspol == 'on' ){ echo 'checked'; }; ?> name="xtfefoli_sharing_option[xtfefoli_bddspol]"  >
+                    <span style="display: inline-flex; align-items: center; vertical-align: middle;">
+                        <?php esc_attr_e( 'By default don\'t share posts on LinkedIn', 'xt-feed-for-linkedin' ); ?>
+                        <span class="xtfefoli-tooltip-wrap">
+                            <span class="xtfefoli-tooltip-icon">?</span>
+                            <span class="xtfefoli-tooltip-text"><?php esc_html_e( 'By default, post sharing checkbox on new posts is unchecked. Enable this if you only want to manually select posts to share.', 'xt-feed-for-linkedin' ); ?></span>
+                        </span>
+                    </span>
                 </div>
             </div>
         </div>

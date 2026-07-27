@@ -84,7 +84,7 @@
 		$(document).on("click", ".lf-delete-btn", function () {
 			var userSub = $(this).data("sub");
 			var userEmail = $(this).data("email");
-			if (confirm("Are you sure you want to delete this user?")) {
+			if (confirm("Are you sure you want to remove this account? Any pending scheduled posts for this account (and its pages) will be cancelled.")) {
 				$.ajax({
 					type: "POST",
 					url: xtfefoli_ajax.ajax_url,

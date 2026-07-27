@@ -53,6 +53,7 @@ class XT_Feed_Linkedin_Sharing {
      * @return void
      */
     public function xtfefoli_display_linkedin_shared_column( $column, $post_id ) {
+        global $xt_feed_for_linkedin;
         if ( 'xtfefoli_shared_on_linkedin' === $column ) {
 
             $shared_status = get_post_meta( $post_id, '_xtfefoli_shared_on_linkedin', true );
@@ -72,11 +73,16 @@ class XT_Feed_Linkedin_Sharing {
                 }
             }else{
                 ?>
-                <div>
-                    <?php echo wp_kses_post( $status_text ); ?> |
-                    <a class="xtfefoli_share_cpt_button_lt" href="javascript:void(0);" data-post_id="<?php echo esc_attr( $post_id ); ?>" data-post_type="<?php echo esc_attr( $xtfefoli_post_type ); ?>" >
-                        <?php esc_attr_e( 'Share Now', 'xt-feed-for-linkedin' ); ?>
-                    </a>
+                <div class="xtfefoli-share-column-container" style="margin-top: 5px; display: flex; flex-direction: column; gap: 5px;">
+                    <div><?php echo wp_kses_post( $status_text ); ?></div>
+                    <div>
+                        <?php echo $xt_feed_for_linkedin->common->xtfefoli_get_accounts_select_html( '', 'xtfefoli_share_account_' . $post_id, 'xtfefoli-share-account' ); ?>
+                    </div>
+                    <div>
+                        <a class="xtfefoli_share_cpt_button_lt button button-small" href="javascript:void(0);" data-post_id="<?php echo esc_attr( $post_id ); ?>" data-post_type="<?php echo esc_attr( $xtfefoli_post_type ); ?>" >
+                            <?php esc_attr_e( 'Share Now', 'xt-feed-for-linkedin' ); ?>
+                        </a>
+                    </div>
                     <div class="if_lt_notice" style="margin-top:15px;"></div>
                 </div>
                 <?php
@@ -274,9 +280,17 @@ class XT_Feed_Linkedin_Sharing {
      * @param int $post_id
      * @return void
      */
-    public function xtfefoli_share_cpts_in_selected_account( $message, $post_id, $sharing_type ){
+    public function xtfefoli_share_cpts_in_selected_account( $message, $post_id, $sharing_type, $target_account = '' ){
         global $xt_feed_for_linkedin, $xt_feed_for_linkedin_pro;
-        $selected_account = $xt_feed_for_linkedin->common->xtfefoli_get_active_account_token();
+        
+        $selected_account = null;
+        if ( ! empty( $target_account ) && $target_account !== 'default' ) {
+            $selected_account = $xt_feed_for_linkedin->common->xtfefoli_get_account_token_by_identifier( $target_account );
+        }
+        
+        if ( empty( $selected_account ) || ! is_array( $selected_account ) ) {
+            $selected_account = $xt_feed_for_linkedin->common->xtfefoli_get_active_account_token();
+        }
 
         if ( empty( $selected_account ) || !is_array( $selected_account ) ){
             

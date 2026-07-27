@@ -112,7 +112,7 @@ class XT_Feed_Linkedin_User_Company_Data {
     public function xtfefoli_get_users_companies( $xtfefoli_companies_list_ids, $access_token ){
         
         $xtfefoli_companies_ids   = implode( ',', $xtfefoli_companies_list_ids );
-        $companiesurl       = 'https://api.linkedin.com/v2/organizations?ids=List('.$xtfefoli_companies_ids.')';
+        $companiesurl       = 'https://api.linkedin.com/v2/organizations?ids=List('.$xtfefoli_companies_ids.')&projection=(results(*(id,localizedName,vanityName,versionTag,logoV2(cropped~:playableStreams))))';
         $lfc_response       = wp_remote_get( $companiesurl, array( 
             'headers'       => array( 
                 'Authorization' => 'Bearer '.$access_token, 
@@ -168,13 +168,18 @@ class XT_Feed_Linkedin_User_Company_Data {
                     }
                 }
                 
+                $logo_url = '';
+                if ( isset( $company['logoV2']['cropped~']['elements'][0]['identifiers'][0]['identifier'] ) ) {
+                    $logo_url = $company['logoV2']['cropped~']['elements'][0]['identifiers'][0]['identifier'];
+                }
+
                 $xtfefoli_linked_accounts[$id] = [
                     'id'           => $id,
                     'sub'          => $company['versionTag'] ?? '',
                     'vanityName'   => $company['vanityName'] ?? '',
                     'given_name'   => $company['localizedName'] ?? '',
                     'versionTag'   => $company['versionTag'] ?? '',
-                    'picture'      => '',
+                    'picture'      => $logo_url,
                     'email'        => implode(', ', $associated_emails ),
                     'is_active'    => 'no',
                     'token'        => '',

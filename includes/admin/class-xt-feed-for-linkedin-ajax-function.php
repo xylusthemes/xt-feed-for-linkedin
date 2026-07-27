@@ -37,14 +37,13 @@ class XT_Feed_Linkedin_Ajax {
     public function xtfefoli_delete_user_callback() {
         // Verify nonce
         if ( !isset( $_POST['xtfefoli_security'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['xtfefoli_security'] ) ), 'xtfefoli_delete_user_nonce' ) ) {
-            wp_send_json_error( "Invalid noncssse" );
+            wp_send_json_error( "Invalid nonce" );
         }
     
-        // Get user details from AJAX request
+        // Get user/page details from AJAX request
         $user_sub   = isset( $_POST['user_sub'] ) ? sanitize_text_field( wp_unslash( $_POST['user_sub'] ) ) : '';
-        $user_email = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
     
-        if ( empty( $user_sub ) || empty( $user_email ) ) {
+        if ( empty( $user_sub ) ) {
             wp_send_json_error( ['message' => 'Invalid request data'] );
             wp_die();
         }
@@ -57,39 +56,89 @@ class XT_Feed_Linkedin_Ajax {
             wp_die();
         }
     
-        // Find the selected user
-        $selected_user = null;
+        // Find the selected user or page
+        $selected_item = null;
         foreach ( $linkedin_users as $user ) {
-            if ( isset($user['sub'] ) && $user['sub'] === $user_sub && isset( $user['email'] ) && $user['email'] === $user_email ) {
-                $selected_user = $user;
+            if ( isset( $user['sub'] ) && $user['sub'] === $user_sub ) {
+                $selected_item = $user;
+                break;
+            }
+            if ( isset( $user['id'] ) && (string) $user['id'] === $user_sub ) {
+                $selected_item = $user;
                 break;
             }
         }
     
-        if ( !$selected_user ) {
-            wp_send_json_error( ['message' => 'User not found'] );
+        if ( !$selected_item ) {
+            wp_send_json_error( ['message' => 'Account not found'] );
             wp_die();
         }
     
-        $has_token     = !empty( $selected_user['access_token'] );
-        $updated_users = array_filter( $linkedin_users, function ( $user ) use ( $user_sub, $user_email, $has_token ) {
+        $token_to_remove = !empty( $selected_item['access_token'] ) ? $selected_item['access_token'] : '';
+        $email_to_remove = !empty( $selected_item['email'] ) ? $selected_item['email'] : '';
+        $is_profile      = isset( $selected_item['access_token'] ) && ! isset( $selected_item['versionTag'] );
+    
+        $identifiers_to_cancel = array();
+        if ( $is_profile ) {
+            $identifiers_to_cancel[] = 'profile:' . $user_sub;
+        } else {
+            $identifiers_to_cancel[] = 'page:' . $user_sub;
+        }
+    
+        $updated_users = array_filter( $linkedin_users, function ( $user ) use ( $user_sub, $token_to_remove, $email_to_remove, $is_profile, &$identifiers_to_cancel ) {
+            // Remove target profile
             if ( isset( $user['sub'] ) && $user['sub'] === $user_sub ) {
                 return false;
             }
-            if ( $has_token && isset( $user['email'] ) && $user['email'] === $user_email && empty( $user['access_token'] ) ) {
+            // Remove target page
+            if ( isset( $user['id'] ) && (string) $user['id'] === $user_sub ) {
+                return false;
+            }
+            // If deleting a parent profile, cascade-delete all child pages linked by email
+            if ( $is_profile && ! empty( $email_to_remove ) && isset( $user['email'] ) && $user['email'] === $email_to_remove && isset( $user['versionTag'] ) ) {
+                $identifiers_to_cancel[] = 'page:' . $user['id'];
                 return false;
             }
             return true;
         });
+
+        // Cancel scheduled posts for removed accounts
+        if ( ! empty( $identifiers_to_cancel ) ) {
+            $scheduled_posts = get_posts( array(
+                'post_type'      => 'any',
+                'post_status'    => 'any',
+                'posts_per_page' => -1,
+                'fields'         => 'ids',
+                'meta_query'     => array(
+                    array(
+                        'key'     => '_xtfefoli_schedule_share_account',
+                        'value'   => $identifiers_to_cancel,
+                        'compare' => 'IN'
+                    )
+                )
+            ) );
+
+            if ( ! empty( $scheduled_posts ) ) {
+                foreach ( $scheduled_posts as $p_id ) {
+                    delete_post_meta( $p_id, '_xtfefoli_schedule_enabled' );
+                    delete_post_meta( $p_id, '_xtfefoli_schedule_datetime' );
+                    delete_post_meta( $p_id, '_xtfefoli_schedule_share_account' );
+                    
+                    if ( function_exists( 'as_unschedule_all_actions' ) ) {
+                        as_unschedule_all_actions( 'xtfefoli_share_post_cron', array( $p_id ), 'xtfefoli_share_group' );
+                    }
+                }
+            }
+        }
     
         // If no users left, delete the option
         if ( empty( $updated_users ) ) {
             delete_option('xtfefoli_linkedin_user_data');
-            wp_send_json_success(['message' => 'User and associated LinkedIn pages were removed successfully']);
+            wp_send_json_success(['message' => 'Account and associated pages were removed successfully']);
         } else {
             // Otherwise, update the option
             update_option('xtfefoli_linkedin_user_data', array_values( $updated_users ) );
-            wp_send_json_success(['message' => 'User and associated LinkedIn pages were removed successfully']);
+            wp_send_json_success(['message' => 'Account and associated pages were removed successfully']);
         }
         wp_die();
     }     
@@ -106,12 +155,11 @@ class XT_Feed_Linkedin_Ajax {
             wp_send_json_error(array('message' => 'Invalid nonce'));
         }
     
-        // Get user details from AJAX request
+        // Get user/page details from AJAX request
         $user_sub   = isset($_POST['user_sub']) ? sanitize_text_field( wp_unslash( $_POST['user_sub'] ) ) : '';
-        $user_email = isset($_POST['user_email']) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
         $is_active  = isset($_POST['is_active']) ? sanitize_text_field( wp_unslash( $_POST['is_active'] ) ) : 'no';
     
-        if (empty($user_sub) || empty($user_email)) {
+        if (empty($user_sub)) {
             wp_send_json_error(array('message' => 'Invalid request data'));
         }
     
@@ -124,7 +172,14 @@ class XT_Feed_Linkedin_Ajax {
     
         // Update the users array
         foreach ($linkedin_users as &$user) {
-            if (isset($user['sub']) && $user['sub'] === $user_sub && isset($user['email']) && $user['email'] === $user_email) {
+            $match = false;
+            if ( isset( $user['sub'] ) && $user['sub'] === $user_sub ) {
+                $match = true;
+            } elseif ( isset( $user['id'] ) && (string) $user['id'] === $user_sub ) {
+                $match = true;
+            }
+            
+            if ( $match ) {
                 $user['is_active'] = $is_active;
             } else if ($is_active === 'yes') {
                 $user['is_active'] = 'no';
@@ -133,7 +188,7 @@ class XT_Feed_Linkedin_Ajax {
     
         // Save updated data
         update_option('xtfefoli_linkedin_user_data', $linkedin_users );
-        wp_send_json_success( array( 'message' => 'User status updated successfully' ) );
+        wp_send_json_success( array( 'message' => 'Account status updated successfully' ) );
     }
 
     /**
@@ -167,7 +222,8 @@ class XT_Feed_Linkedin_Ajax {
 
         // Share to LinkedIn Company Page
         $sharing_type    = 'manual';
-        $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id, $sharing_type );
+        $share_account   = isset( $_POST['share_account'] ) ? sanitize_text_field( wp_unslash( $_POST['share_account'] ) ) : '';
+        $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id, $sharing_type, $share_account );
 
         if ( isset( $linkedin_result['message'] ) && !empty( $linkedin_result['message'] ) ) {
             $e_message = $linkedin_result['message'];
@@ -244,7 +300,8 @@ class XT_Feed_Linkedin_Ajax {
 
         // Share to LinkedIn Company Page
         $sharing_type    = 'manual';
-        $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id, $sharing_type );
+        $share_account   = isset( $_POST['share_account'] ) ? sanitize_text_field( wp_unslash( $_POST['share_account'] ) ) : '';
+        $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id, $sharing_type, $share_account );
 
         if ( isset( $linkedin_result['message'] ) && !empty( $linkedin_result['message'] ) ) {
             $e_message = $linkedin_result['message'];

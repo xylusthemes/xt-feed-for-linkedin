@@ -110,63 +110,88 @@ class LinkedIn_Feedpress_XTFEFOLI_Authorize {
      */
     public function handle_xtfefoli_linkedin_oauth_callback() {
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        if ( isset( $_GET['linkedin_auth'] ) && esc_attr( sanitize_text_field( wp_unslash( $_GET['linkedin_auth'] ) ) ) == 1 && isset( $_GET['access_token'] ) ) {
-            
-            $timestamp      = time();
-            $token_expiring = strtotime( '+58 days', $timestamp );
+        if ( isset( $_GET['linkedin_auth'] ) && esc_attr( sanitize_text_field( wp_unslash( $_GET['linkedin_auth'] ) ) ) == 1 ) {
+            if ( isset( $_GET['access_token'] ) ) {
+                $timestamp      = time();
+                $token_expiring = strtotime( '+58 days', $timestamp );
 
-            $new_linkedin_user  = [
-                'sub'           => isset( $_GET['sub'] ) ? sanitize_text_field( wp_unslash( $_GET['sub'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-                'full_name'     => isset( $_GET['name'] ) ? sanitize_text_field( wp_unslash( $_GET['name'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-                'given_name'    => isset( $_GET['given_name'] ) ? sanitize_text_field( wp_unslash( $_GET['given_name'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-                'family_name'   => isset( $_GET['family_name'] ) ? sanitize_text_field( wp_unslash( $_GET['family_name'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-                'picture'       => isset( $_GET['picture'] ) ? esc_url_raw( wp_unslash( $_GET['picture'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-                'email'         => isset( $_GET['email'] ) ? sanitize_email( wp_unslash( $_GET['email'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-                'access_token'  => isset( $_GET['access_token'] ) ? sanitize_text_field( wp_unslash( $_GET['access_token'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-                'token_expired' => $token_expiring,
-                'is_active'     => 'no',
-            ];
-            
-            $xtfefoli_linked_accounts = get_option( 'xtfefoli_linkedin_user_data', true );
+                $new_linkedin_user  = [
+                    'sub'           => isset( $_GET['sub'] ) ? sanitize_text_field( wp_unslash( $_GET['sub'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                    'full_name'     => isset( $_GET['name'] ) ? sanitize_text_field( wp_unslash( $_GET['name'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                    'given_name'    => isset( $_GET['given_name'] ) ? sanitize_text_field( wp_unslash( $_GET['given_name'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                    'family_name'   => isset( $_GET['family_name'] ) ? sanitize_text_field( wp_unslash( $_GET['family_name'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                    'picture'       => isset( $_GET['picture'] ) ? esc_url_raw( wp_unslash( $_GET['picture'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                    'email'         => isset( $_GET['email'] ) ? sanitize_email( wp_unslash( $_GET['email'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                    'access_token'  => isset( $_GET['access_token'] ) ? sanitize_text_field( wp_unslash( $_GET['access_token'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                    'token_expired' => $token_expiring,
+                    'is_active'     => 'no',
+                ];
+                
+                $xtfefoli_linked_accounts = get_option( 'xtfefoli_linkedin_user_data', true );
 
-            // Ensure it's an array
-            if (!is_array($xtfefoli_linked_accounts)) {
-                $xtfefoli_linked_accounts = [];
-            }
-
-            $found = false;
-
-            // Loop through existing accounts to check if the user already exists
-            foreach ($xtfefoli_linked_accounts as $key => $account) {
-                if ($account['full_name'] === $new_linkedin_user['full_name'] && $account['email'] === $new_linkedin_user['email'] ) {
-                    // If found, update the existing user data
-                    $xtfefoli_linked_accounts[$key] = $new_linkedin_user;
-                    $found = true;
-                    break;
+                // Ensure it's an array
+                if (!is_array($xtfefoli_linked_accounts)) {
+                    $xtfefoli_linked_accounts = [];
                 }
+
+                $found = false;
+
+                // Loop through existing accounts to check if the user already exists
+                foreach ($xtfefoli_linked_accounts as $key => $account) {
+                    if ( isset( $account['full_name'], $account['email'] ) && $account['full_name'] === $new_linkedin_user['full_name'] && $account['email'] === $new_linkedin_user['email'] ) {
+                        // If found, update the existing user data
+                        $xtfefoli_linked_accounts[$key] = $new_linkedin_user;
+                        $found = true;
+                        break;
+                    }
+                }
+
+                // If the user does not exist, add a new entry
+                if ( !$found ) {
+                    $xtfefoli_linked_accounts[] = $new_linkedin_user;
+                }
+
+                // Save updated LinkedIn accounts list to wp_options
+                update_option( 'xtfefoli_linkedin_user_data', $xtfefoli_linked_accounts );
+
+                delete_transient( 'xtfefoli_linkedin_feedpress_page_sync_flag' );
+
+                // Redirect to avoid resubmission issue
+                $redirect_url = add_query_arg( 
+                    array(
+                        'message' => urlencode( 'Account Authorize Successfully' ), 
+                        'status'  => 1
+                    ), 
+                    admin_url('admin.php?page=xt_feed_for_linkedin&tab=general') 
+                );
+                wp_safe_redirect( $redirect_url );
+                exit;
+            } else {
+                // Access token missing/cancelled flow
+                $error_msg = '';
+                if ( isset( $_GET['lf_error'] ) ) {
+                    $error_msg = sanitize_text_field( wp_unslash( $_GET['lf_error'] ) );
+                } elseif ( isset( $_GET['xtfefoli_error'] ) ) {
+                    $error_msg = sanitize_text_field( wp_unslash( $_GET['xtfefoli_error'] ) );
+                } elseif ( isset( $_GET['error_description'] ) ) {
+                    $error_msg = sanitize_text_field( wp_unslash( $_GET['error_description'] ) );
+                } elseif ( isset( $_GET['error'] ) ) {
+                    $error_msg = sanitize_text_field( wp_unslash( $_GET['error'] ) );
+                } else {
+                    $error_msg = __( 'Authorization failed or was cancelled.', 'xt-feed-for-linkedin' );
+                }
+
+                $redirect_url = add_query_arg( 
+                    array(
+                        'message' => urlencode( $error_msg ), 
+                        'status'  => 0
+                    ),
+                    admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=general' )
+                );
+                wp_safe_redirect( $redirect_url );
+                exit;
             }
-
-            // If the user does not exist, add a new entry
-            if ( !$found ) {
-                $xtfefoli_linked_accounts[] = $new_linkedin_user;
-            }
-
-            // Save updated LinkedIn accounts list to wp_options
-            update_option( 'xtfefoli_linkedin_user_data', $xtfefoli_linked_accounts );
-
-            delete_transient( 'xtfefoli_linkedin_feedpress_page_sync_flag' );
-
-            // Redirect to avoid resubmission issue
-            $redirect_url = add_query_arg( 
-                array(
-                    'message' => urlencode( 'Account Authorize Successfully' ), 
-                    'status'  => 1
-                ), 
-                admin_url('?page=xt_feed_for_linkedin&tab=general') 
-            );
-            wp_safe_redirect( $redirect_url );
-            exit;
-        }else{
+        } else {
              // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             if( isset( $_GET['xtfefoli_error'] ) && !empty( $_GET['xtfefoli_error'] ) ){
                 $lferror      = esc_attr( sanitize_text_field( wp_unslash( $_GET['xtfefoli_error'] ) ) );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
