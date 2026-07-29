@@ -179,7 +179,21 @@ class XT_Feed_Linkedin_Common {
      */
     public function xtfefoli_show_acuthorized_accounts(){
             $linkedin_users = get_option('xtfefoli_linkedin_user_data');
-            if( !empty( $linkedin_users ) ){
+            if( !empty( $linkedin_users ) && is_array( $linkedin_users ) ){
+                // Separate profiles and pages
+                $profiles = array();
+                $pages    = array();
+                foreach ( $linkedin_users as $user ) {
+                    if ( isset( $user['versionTag'] ) ) {
+                        $pages[] = $user;
+                    } else {
+                        $profiles[] = $user;
+                    }
+                }
+                if( empty( $profiles ) ){
+                    return;
+                }
+
             ?> 
                 <div class="lf-card">
                     <div class="header">
@@ -192,102 +206,192 @@ class XT_Feed_Linkedin_Common {
                     </div>
                     <div class="content">
                         <?php
-                            foreach( $linkedin_users as $linkedin_user ){
+                            foreach( $profiles as $profile ){
 
-                                $given_name  = isset( $linkedin_user['given_name'] ) ? $linkedin_user['given_name'] : '';
-                                $family_name = isset( $linkedin_user['family_name'] ) ? $linkedin_user['family_name'] : '';
-                                $user_sub    = $linkedin_user['sub'];
-                                $picture     = $linkedin_user['picture'] ?? '';
-                                $company_id  = $linkedin_user['id'] ?? '';
+                                $given_name  = isset( $profile['given_name'] ) ? $profile['given_name'] : '';
+                                $family_name = isset( $profile['family_name'] ) ? $profile['family_name'] : '';
+                                $user_sub    = $profile['sub'];
+                                $picture     = $profile['picture'] ?? '';
                                 $full_name   = ucfirst( $given_name ) . ' ' . ucfirst( $family_name );
-                                $is_active   = $linkedin_user['is_active'];
-                                $email       = $linkedin_user['email'];
-                                $token_expired = isset( $linkedin_user['token_expired'] ) ? (int) $linkedin_user['token_expired'] : '';
-                                $company_id  = isset( $linkedin_user['id'] ) ? $linkedin_user['id'] : '';
-                                $access_token = isset( $linkedin_user['access_token'] ) ? $linkedin_user['access_token'] : '';
-                                $c_timestamp = time();
-                                $is_page     = '';
-                                if ( !empty( $company_id ) ) {
-                                    $is_page = ' ( Page ) ';
-                                }
+                                $is_active   = $profile['is_active'] ?? 'no';
+                                $email       = $profile['email'] ?? '';
+                                $access_token = isset( $profile['access_token'] ) ? $profile['access_token'] : '';
                                 
-                                if ( xtlf_is_pro() || ( !xtlf_is_pro() && !empty( $access_token ) ) ) {
-                                    ?>
-                                    <div class="lf-inner-main-section" id="user_<?php echo esc_attr( $user_sub ); ?>">
-                                        <div class="lf-card-single-row"  >
-                                            <div class="lf-card-single-row-content">
-                                                <div class="lf-profile-info">
-                                                    <?php if( !empty( $picture ) ){ ?>
-                                                        <?php // phpcs:disable PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage  ?>
-                                                        <img src="<?php echo esc_url( $picture ); ?>" alt="Profile Picture" class="lf-profile-pic" >
-                                                    <?php } ?>
-                                                    <div class="lf-user-details">
-                                                        <div>
-                                                            <div class="lf-user-name"><?php echo esc_attr( $full_name ) . esc_attr( $is_page ); ?></div>
-                                                            <div class="lf-user-email"><?php echo esc_attr( $email ); ?></div>
-                                                            <?php
-                                                                if ( !empty( $company_id ) ) {
-                                                                    $page_url = "https://www.linkedin.com/company/" . esc_attr( $company_id );
-                                                                    ?>
-                                                                    <div>
-                                                                        <strong>
-                                                                            <a target="_blank" href="<?php echo esc_url( $page_url ); ?>" style="text-decoration: none;" >
-                                                                                <?php echo esc_html( $company_id ); ?>
-                                                                            </a>
-                                                                        </strong>
-                                                                    </div>
-                                                                    <?php
-                                                                }
-                                                            ?>
-                                                        </div>
+                                ?>
+                                <div class="lf-inner-main-section" id="user_<?php echo esc_attr( $user_sub ); ?>" style="display: block; width: 100%;">
+                                    <div class="lf-card-single-row"  >
+                                        <div class="lf-card-single-row-content">
+                                            <div class="lf-profile-info">
+                                                <?php if( !empty( $picture ) ){ ?>
+                                                    <?php // phpcs:disable PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage  ?>
+                                                    <img src="<?php echo esc_url( $picture ); ?>" alt="Profile Picture" class="lf-profile-pic" >
+                                                <?php } else { ?>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" class="lf-profile-pic lf-profile-pic-placeholder">
+                                                        <path fill="#e7e2dc" d="M0 0h128v128H0z"></path>
+                                                        <path fill="#788fa5" d="M88.41 84.67a32 32 0 1 0-48.82 0 66.13 66.13 0 0 1 48.82 0"></path>
+                                                        <path fill="#9db3c8" d="M88.41 84.67a32 32 0 0 1-48.82 0A66.79 66.79 0 0 0 0 128h128a66.79 66.79 0 0 0-39.59-43.33"></path>
+                                                        <path fill="#56687a" d="M64 96a31.93 31.93 0 0 0 24.41-11.33 66.13 66.13 0 0 0-48.82 0A31.93 31.93 0 0 0 64 96"></path>
+                                                    </svg>
+                                                <?php } ?>
+                                                <div class="lf-user-details">
+                                                    <div>
+                                                        <div class="lf-user-name"><?php echo esc_attr( $full_name ); ?></div>
+                                                        <div class="lf-user-email"><?php echo esc_attr( $email ); ?></div>
                                                     </div>
                                                 </div>
-                                                <div class="lf-actions">
-                                                    <label class="lf-switch">
-                                                        <input type="checkbox" class="lf-status-toggle" data-sub="<?php echo esc_attr( $user_sub ); ?>" data-email="<?php echo esc_attr( $email ); ?>" <?php if( $is_active == 'yes' ){ echo "checked"; } ?> >
-                                                        <span class="lf-slider round" title="Activate/Deactivate Account"></span>
-                                                    </label>
+                                            </div>
+                                            <div class="lf-actions">
+                                                <label class="lf-switch">
+                                                    <input type="checkbox" class="lf-status-toggle" data-sub="<?php echo esc_attr( $user_sub ); ?>" data-email="<?php echo esc_attr( $email ); ?>" <?php if( $is_active == 'yes' ){ echo "checked"; } ?> >
+                                                    <span class="lf-slider round" title="Activate/Deactivate Account"></span>
+                                                </label>
 
-                                                    <button title="Delete Account" class="lf-delete-btn"  id="xtfefoli_user_deletion" data-sub="<?php echo esc_attr( $user_sub ); ?>" data-email="<?php echo esc_attr( $email ); ?>">
-                                                        <svg fill="#ff0000" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="24px" height="24px">
-                                                            <path d="M12,2C6.47,2,2,6.47,2,12c0,5.53,4.47,10,10,10s10-4.47,10-10C22,6.47,17.53,2,12,2z M16.707,15.293 c0.391,0.391,0.391,1.023,0,1.414C16.512,16.902,16.256,17,16,17s-0.512-0.098-0.707-0.293L12,13.414l-3.293,3.293 C8.512,16.902,8.256,17,8,17s-0.512-0.098-0.707-0.293c-0.391-0.391-0.391-1.023,0-1.414L10.586,12L7.293,8.707 c-0.391-0.391-0.391-1.023,0-1.414s1.023-0.391,1.414,0L12,10.586l3.293-3.293c0.391-0.391,1.023-0.391,1.414,0 s0.391,1.023,0,1.414L13.414,12L16.707,15.293z"/>
-                                                        </svg>
-                                                    </button>
-                                                </div>
+                                                <button title="Delete Account" class="lf-delete-btn"  id="xtfefoli_user_deletion" data-sub="<?php echo esc_attr( $user_sub ); ?>" data-email="<?php echo esc_attr( $email ); ?>">
+                                                    <svg fill="#ff0000" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="24px" height="24px">
+                                                        <path d="M12,2C6.47,2,2,6.47,2,12c0,5.53,4.47,10,10,10s10-4.47,10-10C22,6.47,17.53,2,12,2z M16.707,15.293 c0.391,0.391,0.391,1.023,0,1.414C16.512,16.902,16.256,17,16,17s-0.512-0.098-0.707-0.293L12,13.414l-3.293,3.293 C8.512,16.902,8.256,17,8,17s-0.512-0.098-0.707-0.293c-0.391-0.391-0.391-1.023,0-1.414L10.586,12L7.293,8.707 c-0.391-0.391-0.391-1.023,0-1.414s1.023-0.391,1.414,0L12,10.586l3.293-3.293c0.391-0.391,1.023-0.391,1.414,0 s0.391,1.023,0,1.414L13.414,12L16.707,15.293z"/>
+                                                    </svg>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                    <?php 
-                                }else {
-                                    // Non-Pro & no access token
-                                    ?>
-                                    <div class="lf-inner-main-section">
-                                        <div class="lf-card-single-row" style="padding:30px 20px;display:flex;align-items:center;justify-content:space-between;">
-                                            
-                                            <div class="lf-card-left" style="flex:1;">
-                                                <?php if( !empty($full_name) && !empty($company_id) ) : 
-                                                    $page_url = "https://www.linkedin.com/company/" . esc_attr( $company_id ); ?>
-                                                    <a href="<?php echo esc_url( $page_url ); ?>" target="_blank" style="text-decoration:none; color:#0073b1; font-weight:bold;">
-                                                        <?php echo esc_html( $full_name ); ?>
-                                                    </a>
-                                                <?php endif; ?>
-                                            </div>
-
-                                            <div class="lf-card-center" style="flex:2; text-align:center; color:#d9534f; font-weight:bold;">
-                                                <?php esc_attr_e( 'Upgrade to' ); ?><strong><?php esc_attr_e( ' Pro' ); ?></strong> <?php esc_attr_e( 'to unlock sharing for any post on this page'); ?>
-                                            </div>
-
-                                            <div class="lf-card-right" style="flex:1; text-align:right;">
-                                                <a target="_blank" href="<?php echo esc_url( 'https://xylusthemes.com/plugins/xt-feed-for-linkedin/' ); ?>" class="xtfefoli_button">
-                                                    <?php esc_attr_e( 'Buy Pro' ); ?>
-                                                </a>
-                                            </div>
-
-                                        </div>
-                                    </div>
-
+                                    
                                     <?php
-                                }
+                                    // Find and render child pages associated with this profile
+                                    $child_pages = array();
+                                    foreach ( $pages as $page ) {
+                                        $match = false;
+                                        
+                                        // Match by access token
+                                        if ( ! empty( $access_token ) && isset( $page['access_token'] ) && $page['access_token'] === $access_token ) {
+                                            $match = true;
+                                        }
+                                        
+                                        // Match by email
+                                        if ( !$match && ! empty( $email ) && ! empty( $page['email'] ) ) {
+                                            $page_emails = array_map( 'trim', explode( ',', $page['email'] ) );
+                                            if ( in_array( $email, $page_emails, true ) ) {
+                                                $match = true;
+                                            }
+                                        }
+                                        
+                                        if ( $match ) {
+                                            $child_pages[] = $page;
+                                        }
+                                    }
+
+                                    if ( ! empty( $child_pages ) ) {
+                                        ?>
+                                        <div class="lf-child-accounts-list">
+                                            <?php
+                                            foreach ( $child_pages as $page ) {
+                                                $page_id       = $page['id'];
+                                                $page_name     = $page['given_name'] ?? '';
+                                                $page_pic      = $page['picture'] ?? '';
+                                                
+                                                // Self-healing: if picture is empty, fetch it from LinkedIn API using parent's access token
+                                                if ( empty( $page_pic ) && ! empty( $access_token ) ) {
+                                                    $co_url = 'https://api.linkedin.com/v2/organizations/' . $page_id . '?projection=(id,logoV2(cropped~:playableStreams))';
+                                                    $co_response = wp_remote_get( $co_url, array(
+                                                        'headers' => array(
+                                                            'Authorization'             => 'Bearer ' . $access_token,
+                                                            'X-Restli-Protocol-Version' => '2.0.0',
+                                                            'Accept'                    => 'application/json',
+                                                        ),
+                                                        'timeout' => 10,
+                                                    ) );
+                                                    if ( ! is_wp_error( $co_response ) ) {
+                                                        $co_data = json_decode( wp_remote_retrieve_body( $co_response ), true );
+                                                        if ( isset( $co_data['logoV2']['cropped~']['elements'][0]['identifiers'][0]['identifier'] ) ) {
+                                                            $page_pic = $co_data['logoV2']['cropped~']['elements'][0]['identifiers'][0]['identifier'];
+                                                            
+                                                            // Update the option array
+                                                            foreach ( $linkedin_users as $idx => $usr ) {
+                                                                if ( isset( $usr['id'] ) && $usr['id'] === $page_id ) {
+                                                                    $linkedin_users[$idx]['picture'] = $page_pic;
+                                                                    update_option( 'xtfefoli_linkedin_user_data', $linkedin_users );
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                $page_active   = $page['is_active'] ?? 'no';
+                                                $page_token    = $page['access_token'] ?? '';
+                                                
+                                                if ( xtlf_is_pro() || ( !xtlf_is_pro() && !empty( $page_token ) ) ) {
+                                                    ?>
+                                                    <div class="lf-child-account-row" id="user_<?php echo esc_attr( $page_id ); ?>">
+                                                        <div class="lf-child-account-card">
+                                                            <div class="lf-profile-info">
+                                                                <?php if( !empty( $page_pic ) ){ ?>
+                                                                    <img src="<?php echo esc_url( $page_pic ); ?>" alt="Page Logo" class="lf-profile-pic lf-profile-pic--page" >
+                                                                <?php } else { ?>
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" class="lf-profile-pic lf-profile-pic--page lf-profile-pic-placeholder">
+                                                                        <path fill="#e7e2dc" d="M0 0h128v128H0z"></path>
+                                                                        <path fill="#9db3c8" d="M48 16h64v112H48z"></path>
+                                                                        <path fill="#788fa5" d="M16 80h32v48H16z"></path>
+                                                                        <path fill="#56687a" d="M48 80h32v48H48z"></path>
+                                                                    </svg>
+                                                                <?php } ?>
+                                                                <div class="lf-user-details">
+                                                                    <div>
+                                                                        <div class="lf-user-name">
+                                                                            <?php echo esc_attr( $page_name ); ?>
+                                                                            <span class="lf-page-badge"><?php esc_html_e( 'Page', 'xt-feed-for-linkedin' ); ?></span>
+                                                                        </div>
+                                                                        <div class="lf-user-email">
+                                                                            <a target="_blank" href="<?php echo esc_url( "https://www.linkedin.com/company/" . esc_attr( $page_id ) ); ?>" style="text-decoration: none;" >
+                                                                                <?php echo esc_html( $page_id ); ?>
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="lf-actions">
+                                                                <label class="lf-switch">
+                                                                    <input type="checkbox" class="lf-status-toggle" data-sub="<?php echo esc_attr( $page_id ); ?>" data-email="" <?php if( $page_active == 'yes' ){ echo "checked"; } ?> >
+                                                                    <span class="lf-slider round" title="Activate/Deactivate Page"></span>
+                                                                </label>
+
+                                                                <button title="Delete Page" class="lf-delete-btn" id="xtfefoli_page_deletion" data-sub="<?php echo esc_attr( $page_id ); ?>" data-email="">
+                                                                    <svg fill="#ff0000" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px">
+                                                                        <path d="M12,2C6.47,2,2,6.47,2,12c0,5.53,4.47,10,10,10s10-4.47,10-10C22,6.47,17.53,2,12,2z M16.707,15.293 c0.391,0.391,0.391,1.023,0,1.414C16.512,16.902,16.256,17,16,17s-0.512-0.098-0.707-0.293L12,13.414l-3.293,3.293 C8.512,16.902,8.256,17,8,17s-0.512-0.098-0.707-0.293c-0.391-0.391-0.391-1.023,0-1.414L10.586,12L7.293,8.707 c-0.391-0.391-0.391-1.023,0-1.414s1.023-0.391,1.414,0L12,10.586l3.293-3.293c0.391-0.391,1.023-0.391,1.414,0 s0.391,1.023,0,1.414L13.414,12L16.707,15.293z"/>
+                                                                    </svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <?php
+                                                } else {
+                                                    // Non-Pro display
+                                                    ?>
+                                                    <div class="lf-child-account-row">
+                                                        <div class="lf-child-account-card" style="padding: 15px; display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                                            <div class="lf-card-left">
+                                                                <a href="<?php echo esc_url( "https://www.linkedin.com/company/" . esc_attr( $page_id ) ); ?>" target="_blank" style="text-decoration:none; color:#0073b1; font-weight:bold;">
+                                                                    <?php echo esc_html( $page_name ); ?>
+                                                                </a>
+                                                            </div>
+                                                            <div class="lf-card-center" style="color:#d9534f; font-weight:bold; font-size:12px;">
+                                                                <?php esc_attr_e( 'Upgrade to' ); ?><strong><?php esc_attr_e( ' Pro' ); ?></strong> <?php esc_attr_e( 'to unlock sharing on this page'); ?>
+                                                            </div>
+                                                            <div class="lf-card-right">
+                                                                <a target="_blank" href="<?php echo esc_url( 'https://xylusthemes.com/plugins/xt-feed-for-linkedin/' ); ?>" class="xtfefoli_button" style="padding: 4px 10px; font-size:12px;">
+                                                                    <?php esc_attr_e( 'Buy Pro' ); ?>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <?php
+                                                }
+                                            }
+                                            ?>
+                                        </div>
+                                        <?php
+                                    }
+                                    ?>
+                                </div>
+                                <?php
                             }
                         ?>
                     </div>
@@ -425,6 +529,99 @@ class XT_Feed_Linkedin_Common {
             null,
             array( '%d' )
         );
+    }
+
+    /**
+     * Get HTML for accounts dropdown
+     *
+     * @param string $selected_value Selected account identifier
+     * @param string $name Name/ID of select input
+     * @param string $class Additional CSS classes
+     * @return string HTML select element
+     */
+    public function xtfefoli_get_accounts_select_html( $selected_value = '', $name = 'xtfefoli_share_account', $class = '' ) {
+        $linkedin_users = get_option('xtfefoli_linkedin_user_data');
+        
+        $html = '<select name="' . esc_attr( $name ) . '" id="' . esc_attr( $name ) . '" class="xtfefoli-account-select ' . esc_attr( $class ) . '" style="max-width: 200px; min-width: 150px;">';
+        $html .= '<option value="default">' . esc_html__( 'Default Active Account', 'xt-feed-for-linkedin' ) . '</option>';
+        
+        if ( !empty( $linkedin_users ) && is_array( $linkedin_users ) ) {
+            foreach ( $linkedin_users as $user ) {
+                $is_page = isset( $user['versionTag'] );
+                $type    = $is_page ? 'page' : 'profile';
+                $id      = $is_page ? ( $user['id'] ?? '' ) : ( $user['sub'] ?? '' );
+                $value   = $type . ':' . $id;
+                
+                if ( $is_page ) {
+                    $label = ( $user['given_name'] ?? '' ) . ' (' . esc_html__( 'Page', 'xt-feed-for-linkedin' ) . ')';
+                } else {
+                    $given = $user['given_name'] ?? '';
+                    $family = $user['family_name'] ?? '';
+                    $label = trim( ucfirst( $given ) . ' ' . ucfirst( $family ) ) . ' (' . esc_html__( 'Profile', 'xt-feed-for-linkedin' ) . ')';
+                }
+                
+                $selected = selected( $selected_value, $value, false );
+                $html .= '<option value="' . esc_attr( $value ) . '" ' . $selected . '>' . esc_html( $label ) . '</option>';
+            }
+        }
+        
+        $html .= '</select>';
+        return $html;
+    }
+
+    /**
+     * Resolve account identifier to its active token and profile/page details
+     *
+     * @param string $identifier Format "profile:<sub>" or "page:<id>"
+     * @return array|null Token details array, or null if not found
+     */
+    public function xtfefoli_get_account_token_by_identifier( $identifier ) {
+        $get_xtfefoli_option = get_option('xtfefoli_linkedin_user_data', true);
+    
+        if (empty($get_xtfefoli_option) || !is_array($get_xtfefoli_option) || empty($identifier)) {
+            return null;
+        }
+        
+        $parts = explode( ':', $identifier, 2 );
+        if ( count( $parts ) !== 2 ) {
+            return null;
+        }
+        $target_type = $parts[0];
+        $target_id   = $parts[1];
+    
+        $email_token_map = [];
+        foreach ($get_xtfefoli_option as $user) {
+            if (!empty($user['email']) && isset($user['access_token']) && !empty($user['access_token'])) {
+                $email_token_map[$user['email']] = $user['access_token'];
+            }
+        }
+    
+        foreach ($get_xtfefoli_option as $user) {
+            $is_page = isset($user['versionTag']);
+            $current_type = $is_page ? 'page' : 'profile';
+            $current_id   = $is_page ? ($user['id'] ?? '') : ($user['sub'] ?? '');
+            
+            if ( $current_type === $target_type && (string)$current_id === (string)$target_id ) {
+                $token = !empty($user['access_token']) ? $user['access_token'] : ($email_token_map[$user['email']] ?? null);
+                if ($token) {
+                    if ($is_page) {
+                        return [
+                            'token'   => $token,
+                            'type'    => 'page',
+                            'page_id' => $user['id']
+                        ];
+                    } else {
+                        return [
+                            'token'   => $token,
+                            'type'    => 'profile',
+                            'user_id' => $user['sub']
+                        ];
+                    }
+                }
+            }
+        }
+    
+        return null;
     }
 }
 

@@ -43,6 +43,8 @@
             let nonce        = $('#xtfefoli_linkedin_feedpress_meta_box_nonce').val();
             let xtfefoli_post_type = $('#xtfefoli_post_type').val();
     
+            let shareAccount = $(this).closest('.xtfefoli_inside').find('.xtfefoli-share-account').val() || '';
+    
             if (!shareMessage.trim()) {
                 $('#if_meta_box_notice').text('Please enter a message before sharing.').css('color', 'red');
                 return;
@@ -56,6 +58,7 @@
                     post_id: postID,
                     share_message: shareMessage,
                     xtfefoli_post_type: xtfefoli_post_type,
+                    share_account: shareAccount,
                     xtfefoli_share_security: nonce
                 },
                 beforeSend: function () {
@@ -106,7 +109,8 @@
             let postID = button.data('post_id');
             let xtfefoli_post_type = button.data('post_type');
             let nonce = $('#xtfefoli_linkedin_feedpress_lt_nonce').val();
-            let noticeBox = button.closest('div').find('.if_lt_notice'); // Get notice box for this row
+            let noticeBox = button.closest('.xtfefoli-share-column-container').find('.if_lt_notice'); // Get notice box for this row
+            let shareAccount = button.closest('.xtfefoli-share-column-container').find('.xtfefoli-share-account').val() || '';
     
             $.ajax({
                 url: ajaxurl, // WordPress AJAX URL
@@ -115,6 +119,7 @@
                     action: 'xtfefoli_share_to_linkedin_lt',
                     post_id: postID,
                     xtfefoli_post_type: xtfefoli_post_type,
+                    share_account: shareAccount,
                     xtfefoli_share_security: nonce
                 },
                 beforeSend: function () {

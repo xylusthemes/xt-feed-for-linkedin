@@ -69,6 +69,9 @@ class XT_Feed_Linkedin_Admin {
 
 		$submenu['xt_feed_for_linkedin'][] = array( __( 'XT Feed for LinkedIn', 'xt-feed-for-linkedin' ), 'manage_options', admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=general' ) );
 		$submenu['xt_feed_for_linkedin'][] = array( __( 'Sharing Options', 'xt-feed-for-linkedin' ), 'manage_options', admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=sharing_options' ) );
+		if ( ! xtlf_is_pro() ) {
+			$submenu['xt_feed_for_linkedin'][] = array( __( 'Feed Builder', 'xt-feed-for-linkedin' ), 'manage_options', admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=feed_builder' ) );
+		}
 		$submenu['xt_feed_for_linkedin'][] = array( __( 'Set Schedule Posts', 'xt-feed-for-linkedin' ), 'manage_options', admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=set_schedule' ) );
 		
 		do_action( 'xtfefoli_bitween_submenu', $submenu, 'xt_feed_for_linkedin' );
@@ -96,7 +99,7 @@ class XT_Feed_Linkedin_Admin {
 		$page_title = ucwords( $_GET['tab'] );
         $active_tab = isset( $_GET['tab'] ) ? esc_attr( sanitize_text_field( wp_unslash( $_GET['tab'] ) ) ) : 'general';
         $gettab     = ucwords( str_replace( '_', ' ', $active_tab ) );
-        if( $active_tab == 'general' || $active_tab == 'support' || $active_tab == 'sharing_options' || $active_tab == 'manage_scheduled_shares' || $active_tab == 'dashboard' || $active_tab == 'set_schedule' || $active_tab == 'license' ){
+        if( $active_tab == 'general' || $active_tab == 'support' || $active_tab == 'sharing_options' || $active_tab == 'manage_scheduled_shares' || $active_tab == 'dashboard' || $active_tab == 'set_schedule' || $active_tab == 'license' || $active_tab == 'feed_builder' ){
             $gettab     = ucwords( str_replace( '_', ' ', $gettab ) );
             $page_title = $gettab;
         }
@@ -114,6 +117,7 @@ class XT_Feed_Linkedin_Admin {
                         <div class="ajax_xtfefoli_notice"></div>
                         <div id="postbox-container-2" class="postbox-container">
                             <div class="lf-app">
+                                <?php if ( 'feed_builder' !== $active_tab || ! xtlf_is_pro() ) : ?>
                                 <div class="lf-tabs">
                                     <div class="tabs-scroller">
                                         <div class="var-tabs var-tabs--item-horizontal var-tabs--layout-horizontal-padding">
@@ -123,6 +127,10 @@ class XT_Feed_Linkedin_Admin {
 												</a>
 												<a href="<?php echo esc_url( admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=sharing_options' ) ); ?>" class="var-tab <?php echo $active_tab == 'sharing_options' ? 'var-tab--active' : 'var-tab--inactive'; ?>">
 													<span class="tab-label"><?php esc_attr_e( 'Sharing Options', 'xt-feed-for-linkedin' ); ?></span>
+												</a>
+
+												<a href="<?php echo esc_url( admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=feed_builder' ) ); ?>" class="var-tab <?php echo $active_tab == 'feed_builder' ? 'var-tab--active' : 'var-tab--inactive'; ?>">
+													<span class="tab-label"><?php esc_attr_e( 'Feed Builder', 'xt-feed-for-linkedin' ); if( !xtlf_is_pro() ){ echo '<div class="xtlf-pro-badge" style="background: #22c55e; color: #fff;"> NEW </div>'; } ?></span>
 												</a>
 
 												<a href="<?php echo esc_url( admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=set_schedule' ) ); ?>" class="var-tab <?php echo $active_tab == 'set_schedule' ? 'var-tab--active' : 'var-tab--inactive'; ?>">
@@ -152,6 +160,7 @@ class XT_Feed_Linkedin_Admin {
                                         </div>
                                     </div>
                                 </div>
+                                <?php endif; ?>
                             </div>
     
                             <?php
@@ -174,7 +183,42 @@ class XT_Feed_Linkedin_Admin {
 								}
                             }elseif( $active_tab == 'support' ){
                                 require_once XTFEFOLI_PLUGIN_DIR . '/templates/admin/xt-feed-for-linkedin-support.php';
-                            }else{
+                            }elseif( $active_tab == 'feed_builder' && !xtlf_is_pro() ){
+								?>
+								<div class="lf-container">
+									<div class="lf-wrap">
+										<div id="poststuff">
+											<div id="post-body" class="metabox-holder columns-2">
+												<div class="lf-container">
+													<div class="lf-wrap">
+														<div id="poststuff">
+															<div class="lf-pro-upgrade-wrapper" >
+																<div class="lf-pro-upgrade-message" style="margin-bottom: 20px;">
+																	<?php esc_attr_e( 'Live Feed Builder is a' ); ?> <strong><?php esc_attr_e( 'Pro' ); ?></strong> <?php esc_attr_e( 'Feature' ); ?>
+																</div>
+																<p style="font-size: 15px; color: #555; margin-bottom: 25px; line-height: 1.6;">
+																	<?php esc_attr_e( 'Upgrade to Pro to create beautiful, responsive LinkedIn feeds for your website. Display your company page or personal profile posts anywhere with a simple shortcode.' ); ?>
+																</p>
+																<ul style="text-align: left; display: inline-block; font-size: 15px; color: #444; line-height: 1.8; margin-bottom: 30px;">
+																	<li><span style="color: #22c55e; margin-right: 8px;">✔</span> <?php esc_attr_e( 'Multiple feed layouts (Grid, List, Carousel, Masonry)' ); ?></li>
+																	<li><span style="color: #22c55e; margin-right: 8px;">✔</span> <?php esc_attr_e( 'Support for both Company Pages & Personal Profiles' ); ?></li>
+																	<li><span style="color: #22c55e; margin-right: 8px;">✔</span> <?php esc_attr_e( 'Customizable design, colors, and typography' ); ?></li>
+																	<li><span style="color: #22c55e; margin-right: 8px;">✔</span> <?php esc_attr_e( 'Smart caching for blazing fast load times' ); ?></li>
+																</ul>
+																<br>
+																<a href="<?php echo esc_url( XTFEFOLI_PLUGIN_BUY_NOW_URL ); ?>" class="lf-pro-upgrade-btn">
+																	<?php esc_attr_e( 'Buy Pro Now' ); ?>
+																</a>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<?php
+							}else{
 								if( !xtlf_is_pro() ){
 									
 									?>
@@ -228,7 +272,7 @@ class XT_Feed_Linkedin_Admin {
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_GET['page'] ) && esc_attr( sanitize_text_field( wp_unslash( $_GET['page'] ) ) ) == 'xt_feed_for_linkedin' ) {
-			$allowed_tabs = array( 'general', 'support', 'sharing_options', 'set_schedule', 'manage_scheduled_shares', 'license' );
+			$allowed_tabs = array( 'general', 'support', 'sharing_options', 'set_schedule', 'manage_scheduled_shares', 'license', 'feed_builder' );
 
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$tab = isset( $_GET['tab'] ) ? esc_attr( sanitize_text_field( wp_unslash( $_GET['tab'] ) ) ) : 'general';
@@ -308,6 +352,10 @@ class XT_Feed_Linkedin_Admin {
 			<div class="xtfefoli_custom-linkedin-metabox-setting" >
 				<label for="xtfefoli_custom-share-message" style="display: block; font-weight: bold; margin-bottom: 10px;"><?php esc_attr_e( 'Share Message', 'xt-feed-for-linkedin' ); ?></label>
 				<textarea rows="8" name="xtfefoli_global_sharing_message" id="xtfefoli_custom-share-message" style="width: 100%; padding: 5px;"><?php echo esc_attr( $lfgsm_option ); ?></textarea>
+			</div>
+			<div class="xtfefoli_custom-linkedin-metabox-setting" style="margin-top: 15px;">
+				<label for="xtfefoli_share_account" style="display: block; font-weight: bold; margin-bottom: 5px;"><?php esc_attr_e( 'Share Account', 'xt-feed-for-linkedin' ); ?></label>
+				<?php echo $xt_feed_for_linkedin->common->xtfefoli_get_accounts_select_html( '', 'xtfefoli_share_account', 'xtfefoli-share-account' ); ?>
 			</div>
 			<div style="margin-top: 15px;" >
 				<a href="javascript:void(0)" class="xtfefoli_button" id="xtfefoli_share_cpt_button" >

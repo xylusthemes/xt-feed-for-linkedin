@@ -552,6 +552,7 @@ html:not([data-scroll="0"]) .lf-header {
     border-radius: 50%;
     object-fit: cover;
     margin-right: 20px;
+    overflow: hidden;
 }
 .lf-user-name {
     font-weight: bold;
@@ -769,4 +770,359 @@ html:not([data-scroll="0"]) .lf-header {
   line-height: 22px;
   display: flex;
   align-items: center;
+}
+
+/* Account visual hierarchy layout */
+.lf-child-accounts-list {
+    margin-left: 45px;
+    padding-left: 20px;
+    border-left: 2px dashed #0077b5;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.lf-child-account-row {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+.lf-child-account-row::before {
+    content: "";
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    width: 20px;
+    height: 2px;
+    border-top: 2px dashed #0077b5;
+}
+
+.lf-child-account-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+}
+
+.lf-child-account-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: #cbd5e1;
+}
+
+.lf-profile-pic--page {
+    border-radius: 6px !important;
+}
+
+.lf-profile-pic-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #edf2f7;
+    color: #4a5568;
+    width: 60px;
+    height: 60px;
+}
+
+.lf-profile-pic-placeholder .dashicons {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+}
+
+.lf-page-badge {
+    background-color: #e0f2fe;
+    color: #0369a1;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+    text-transform: uppercase;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+svg.lf-profile-pic-placeholder {
+    background: none !important;
+}
+
+/* Onboarding Banner */
+.xtfefoli-onboarding-banner {
+    background: radial-gradient(circle at top left, #2b3a4a, #152232);
+    border-radius: 12px;
+    padding: 30px;
+    color: #ffffff;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.xtfefoli-onboarding-banner__header {
+    margin-bottom: 25px;
+}
+
+.xtfefoli-onboarding-banner__badge {
+    background: rgba(10, 102, 194, 0.2);
+    border: 1px solid rgba(10, 102, 194, 0.4);
+    color: #70b5f9;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    margin-bottom: 12px;
+}
+
+.xtfefoli-onboarding-banner__header h2 {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+}
+
+.xtfefoli-onboarding-banner__header p {
+    color: #a0aec0;
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.xtfefoli-onboarding-banner__steps {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+@media (max-width: 768px) {
+    .xtfefoli-onboarding-banner__steps {
+        flex-direction: column;
+    }
+}
+
+.xtfefoli-onboarding-banner__step {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 20px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.xtfefoli-onboarding-banner__step:hover {
+    transform: translateY(-2px);
+    border-color: rgba(10, 102, 194, 0.5);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.xtfefoli-onboarding-banner__step-num {
+    background: #0A66C2;
+    color: #ffffff;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.xtfefoli-onboarding-banner__step h3 {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 6px 0;
+}
+
+.xtfefoli-onboarding-banner__step p {
+    color: #a0aec0;
+    font-size: 12px;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.xtfefoli-onboarding-banner__cta {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.xtfefoli-onboarding-banner__btn {
+    background: #0a66c2;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 12px 24px;
+    border-radius: 6px;
+    box-shadow: 0 0 0 0 rgba(10, 102, 194, 0.7);
+    animation: xtfefoli-pulse 2s infinite;
+    transition: background 0.2s ease;
+}
+
+.xtfefoli-onboarding-banner__btn:hover {
+    background: #004182;
+}
+
+@keyframes xtfefoli-pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(10, 102, 194, 0.7);
+    }
+    70% {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 10px rgba(10, 102, 194, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(10, 102, 194, 0);
+    }
+}
+
+/* System Status Checklist */
+.xtfefoli-status-list {
+    margin-top: 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.xtfefoli-status-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 15px 20px;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.xtfefoli-status-item:last-child {
+    border-bottom: none;
+}
+
+.xtfefoli-status-item .status-icon {
+    font-size: 16px;
+    font-weight: bold;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.xtfefoli-status-item.status-ok {
+    background: #f7fafc;
+}
+.xtfefoli-status-item.status-ok .status-icon {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.xtfefoli-status-item.status-warn {
+    background: #fffaf0;
+}
+.xtfefoli-status-item.status-warn .status-icon {
+    background: #feebc8;
+    color: #744210;
+}
+
+.xtfefoli-status-item.status-error {
+    background: #fff5f5;
+}
+.xtfefoli-status-item.status-error .status-icon {
+    background: #fed7d7;
+    color: #742a2a;
+}
+
+.status-details {
+    flex: 1;
+}
+
+.status-details strong {
+    font-size: 13px;
+    color: #2d3748;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.status-details p {
+    font-size: 12px;
+    color: #718096;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Interactive CSS-based Tooltips */
+.xtfefoli-tooltip-wrap {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+.xtfefoli-tooltip-icon {
+    background: #edf2f7;
+    color: #4a5568;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+}
+.xtfefoli-tooltip-wrap:hover .xtfefoli-tooltip-icon {
+    background: #0A66C2;
+    color: #ffffff;
+}
+.xtfefoli-tooltip-text {
+    visibility: hidden;
+    width: 220px;
+    background-color: #1a202c;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 10px;
+    position: absolute;
+    z-index: 9999;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    font-size: 11px;
+    line-height: 1.4;
+    font-weight: normal;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+.xtfefoli-tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #1a202c transparent transparent transparent;
+}
+.xtfefoli-tooltip-wrap:hover .xtfefoli-tooltip-text {
+    visibility: visible;
+    opacity: 1;
 }
