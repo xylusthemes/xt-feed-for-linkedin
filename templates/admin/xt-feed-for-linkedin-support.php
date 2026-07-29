@@ -134,7 +134,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                                                             <img alt="<?php esc_attr( $plugin_slug . ' Image' ); ?>" src="<?php echo esc_url( $plugin_icon ); ?>">
                                                         </div>
                                                         <div>
-                                                            <div class="lf-main-name"><?php echo esc_attr( $plugin_slug ); ?></div>
+                                                            <div class="lf-main-name"><?php echo esc_attr( $plugin_name ); ?></div>
                                                             <div><?php echo esc_attr( $plugin_description ); ?></div>
                                                         </div>
                                                     </div>

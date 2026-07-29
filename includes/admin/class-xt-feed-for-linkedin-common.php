@@ -111,6 +111,7 @@ class XT_Feed_Linkedin_Common {
      */
     public function xtfefoli_get_xyuls_themes_plugins(){
         return array(
+            'xylus-events-calendar' => array( 'plugin_name' => esc_html__( 'Easy Events Calendar', 'xt-feed-for-linkedin' ), 'description' => 'Display upcoming events from multiple sources in a responsive calendar with customizable layouts like grid, row, calendar, and masonry.' ),
             'wp-event-aggregator' => array( 'plugin_name' => esc_html__( 'WP Event Aggregator', 'xt-feed-for-linkedin' ), 'description' => 'WP Event Aggregator: Easy way to import Facebook Events, Eventbrite events, MeetUp events into your WordPress Event Calendar.' ),
             'import-facebook-events' => array( 'plugin_name' => esc_html__( 'Import Social Events', 'xt-feed-for-linkedin' ), 'description' => 'Import Facebook events into your WordPress website and/or Event Calendar. Nice Display with shortcode & Event widget.' ),
             'import-eventbrite-events' => array( 'plugin_name' => esc_html__( 'Import Eventbrite Events', 'xt-feed-for-linkedin' ), 'description' => 'Import Eventbrite Events into WordPress website and/or Event Calendar. Nice Display with shortcode & Event widget.' ),
@@ -432,6 +433,11 @@ class XT_Feed_Linkedin_Common {
                 if ($token) {
                     if (isset($user['versionTag'])) {
                         // It's a page
+                        $page_token = isset($user['access_token']) ? $user['access_token'] : '';
+                        if ( ! xtlf_is_pro() && empty( $page_token ) ) {
+                            continue;
+                        }
+
                         return [
                             'token'   => $token,
                             'type'    => 'page',
@@ -548,6 +554,14 @@ class XT_Feed_Linkedin_Common {
         if ( !empty( $linkedin_users ) && is_array( $linkedin_users ) ) {
             foreach ( $linkedin_users as $user ) {
                 $is_page = isset( $user['versionTag'] );
+                
+                if ( $is_page ) {
+                    $page_token = isset($user['access_token']) ? $user['access_token'] : '';
+                    if ( ! xtlf_is_pro() && empty( $page_token ) ) {
+                        continue;
+                    }
+                }
+
                 $type    = $is_page ? 'page' : 'profile';
                 $id      = $is_page ? ( $user['id'] ?? '' ) : ( $user['sub'] ?? '' );
                 $value   = $type . ':' . $id;
@@ -605,6 +619,11 @@ class XT_Feed_Linkedin_Common {
                 $token = !empty($user['access_token']) ? $user['access_token'] : ($email_token_map[$user['email']] ?? null);
                 if ($token) {
                     if ($is_page) {
+                        $page_token = isset($user['access_token']) ? $user['access_token'] : '';
+                        if ( ! xtlf_is_pro() && empty( $page_token ) ) {
+                            return null;
+                        }
+
                         return [
                             'token'   => $token,
                             'type'    => 'page',
