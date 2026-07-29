@@ -4,7 +4,7 @@ Tags: Linkedin, feed, share, auto share, auto-publish
 Requires at least: 4.0  
 Requires PHP: 7.0  
 Tested up to: 7.0
-Stable tag: 1.0.3  
+Stable tag: 1.0.4  
 License: GPLv2 or later  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -17,6 +17,7 @@ XT Feed for LinkedIn auto-shares WordPress posts to LinkedIn with one click, mak
 XT Feed for LinkedIn is a powerful yet simple plugin that allows you to seamlessly share your WordPress posts, pages, and custom post types (CPTs) to your LinkedIn profile or business page. Whether you're a blogger, marketer, or business owner, this plugin helps you streamline your content distribution, saving you time and boosting your reach on the world's largest professional network.
 
 ### ✨ Free Features
+✅ **Live LinkedIn Feed:** Display your LinkedIn company page or profile posts beautifully on your website. Connect accounts, select sources, customize layouts, configure posts, and preview mobile layouts.
 ✅ **Auto-Share on Publish:** Automatically shares your content to LinkedIn the moment you hit "Publish".
 ✅ **Manual Sharing:** One-click sharing directly from the WordPress post editor or the post list table.
 ✅ **Custom Message Templates:** Define how your posts look on LinkedIn using tags like `[POST_TITLE]`, `[POST_LINK]`, `[POST_EXCERPT]`, `[POST_AUTHOR]`, and `[WEBSITE_TITLE]`.
@@ -80,14 +81,18 @@ By using this plugin, you agree to comply with LinkedIn's official policies:
 == Screenshots ==
 
 1. **Dashboard (PRO)** – Get a comprehensive overview of your LinkedIn sharing activities and performance at a glance.
-2. **General Settings** – Effortlessly connect and authorize your LinkedIn profile or business page in just a few clicks.
-3. **Sharing Options** – Take full control of your content by selecting which post types to auto-share and customizing your message templates.
-4. **Set Schedule (PRO)** – Strategically plan your content by scheduling LinkedIn shares for any future date and time.
-5. **Manage Scheduled Shares (PRO)** – Stay organized with a dedicated interface to view, edit, or remove all your upcoming LinkedIn updates.
-6. **Quick Share from Post List** – Instantly share any post directly from your WordPress post listing table with a single click.
-7. **Manual Share from Post Editor** – Customize and share individual posts directly from the WordPress editor while you're creating content.
+2. **Auth & General Settings** – Effortlessly connect and authorize your LinkedIn profile or business page in just a few clicks.
+3. **Feed** – Display live LinkedIn feeds directly on your website using a customizable feed builder. Includes source selection, layout customization, post configuration, advanced settings, and mobile preview.
+4. **Sharing Options** – Take full control of your content by selecting which post types to auto-share and customizing your message templates.
+5. **Set Schedule (PRO)** – Strategically plan your content by scheduling LinkedIn shares for any future date and time.
+6. **Manage Scheduled Shares (PRO)** – Stay organized with a dedicated interface to view, edit, or remove all your upcoming LinkedIn updates.
+7. **Quick Share from Post List** – Instantly share any post directly from your WordPress post listing table with a single click.
+8. **Manual Share from Post Editor** – Customize and share individual posts directly from the WordPress editor while you're creating content.
 
 == Changelog ==  
+
+= 1.0.4 =
+* Added: Live LinkedIn Feed builder to display your company page updates on your website.
 
 = 1.0.3 =
 * Added: Live preview in the sharing option menu.
