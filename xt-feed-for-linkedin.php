@@ -211,9 +211,10 @@ if ( ! class_exists( 'XT_Feed_Linkedin' ) ) :
 		 */
 		public function xtfefoli_custom_linkedin_table() {
 			global $wpdb;
-			$table_name = $wpdb->prefix . 'xt_feed_for_linkedin';
+			$table_name = esc_sql( $wpdb->prefix . 'xt_feed_for_linkedin' );
 
-			if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) != $table_name ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+			if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table_name ) ) ) !== $table_name ) {
 
 				$charset_collate = $wpdb->get_charset_collate();
 				$sql = "CREATE TABLE $table_name (

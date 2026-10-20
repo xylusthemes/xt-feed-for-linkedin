@@ -5,16 +5,10 @@ if (!defined('ABSPATH')) {
 }
 global $xt_feed_for_linkedin;
 
-$linkedin_users = get_option('xtfefoli_linkedin_user_data');
-$has_accounts   = !empty($linkedin_users) && is_array($linkedin_users);
-
-$ssl_active     = is_ssl();
-$cron_active    = !defined('DISABLE_WP_CRON') || !DISABLE_WP_CRON;
-$curl_active    = function_exists('curl_version');
-$php_version    = phpversion();
-$php_compatible = version_compare($php_version, '7.4.0', '>=');
+$xtfefoli_linkedin_users = get_option('xtfefoli_linkedin_user_data');
+$xtfefoli_has_accounts   = !empty($xtfefoli_linkedin_users) && is_array($xtfefoli_linkedin_users);
 ?>
-<div class="form-table" <?php if ( !$has_accounts ) { echo 'style="display: none;"'; } ?>>
+<div class="form-table" <?php if ( !$xtfefoli_has_accounts ) { echo 'style="display: none;"'; } ?>>
     <?php
     $xt_feed_for_linkedin->common->xtfefoli_show_acuthorized_accounts();
     ?>

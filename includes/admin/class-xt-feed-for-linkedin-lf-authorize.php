@@ -70,7 +70,7 @@ class LinkedIn_Feedpress_XTFEFOLI_Authorize {
         if (!empty($linked_accounts)) {
 
             // PRO version – allow multiple accounts, disable only if limit reached (example: max 5)
-            if ( function_exists('xtlf_is_pro') && xtlf_is_pro() ) {
+            if ( ( function_exists( 'xtfefoli_is_pro' ) && xtfefoli_is_pro() ) || ( function_exists( 'xtlf_is_pro' ) && xtlf_is_pro() ) ) {
                 $account_count = is_array($linked_accounts) ? count($linked_accounts) : 1;
                 $max_accounts  = 5; // pro me max accounts limit
                 if ($account_count >= $max_accounts) {
@@ -111,7 +111,7 @@ class LinkedIn_Feedpress_XTFEFOLI_Authorize {
     public function handle_xtfefoli_linkedin_oauth_callback() {
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         if ( isset( $_GET['linkedin_auth'] ) && esc_attr( sanitize_text_field( wp_unslash( $_GET['linkedin_auth'] ) ) ) == 1 ) {
-            if ( isset( $_GET['access_token'] ) ) {
+            if ( isset( $_GET['access_token'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
                 $timestamp      = time();
                 $token_expiring = strtotime( '+58 days', $timestamp );
 
@@ -169,14 +169,14 @@ class LinkedIn_Feedpress_XTFEFOLI_Authorize {
             } else {
                 // Access token missing/cancelled flow
                 $error_msg = '';
-                if ( isset( $_GET['lf_error'] ) ) {
-                    $error_msg = sanitize_text_field( wp_unslash( $_GET['lf_error'] ) );
-                } elseif ( isset( $_GET['xtfefoli_error'] ) ) {
-                    $error_msg = sanitize_text_field( wp_unslash( $_GET['xtfefoli_error'] ) );
-                } elseif ( isset( $_GET['error_description'] ) ) {
-                    $error_msg = sanitize_text_field( wp_unslash( $_GET['error_description'] ) );
-                } elseif ( isset( $_GET['error'] ) ) {
-                    $error_msg = sanitize_text_field( wp_unslash( $_GET['error'] ) );
+                if ( isset( $_GET['lf_error'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                    $error_msg = sanitize_text_field( wp_unslash( $_GET['lf_error'] ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                } elseif ( isset( $_GET['xtfefoli_error'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                    $error_msg = sanitize_text_field( wp_unslash( $_GET['xtfefoli_error'] ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                } elseif ( isset( $_GET['error_description'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                    $error_msg = sanitize_text_field( wp_unslash( $_GET['error_description'] ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                } elseif ( isset( $_GET['error'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                    $error_msg = sanitize_text_field( wp_unslash( $_GET['error'] ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended
                 } else {
                     $error_msg = __( 'Authorization failed or was cancelled.', 'xt-feed-for-linkedin' );
                 }

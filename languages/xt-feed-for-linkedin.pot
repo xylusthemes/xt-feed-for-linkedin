@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-29T06:47:14+00:00\n"
+"POT-Creation-Date: 2026-10-20T09:06:40+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: xt-feed-for-linkedin\n"
@@ -19,7 +19,7 @@ msgstr ""
 #: includes/admin/class-xt-feed-for-linkedin-admin.php:65
 #: includes/admin/class-xt-feed-for-linkedin-admin.php:70
 #: includes/admin/class-xt-feed-for-linkedin-admin.php:299
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:523
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:525
 msgid "XT Feed for LinkedIn"
 msgstr ""
 
@@ -78,39 +78,91 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:347
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:197
+msgid "Live Feed Builder is a"
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:197
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:234
+msgid "Pro"
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:197
+msgid "Feature"
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:200
+msgid "Upgrade to Pro to create beautiful, responsive LinkedIn feeds for your website. Display your company page or personal profile posts anywhere with a simple shortcode."
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:203
+msgid "Multiple feed layouts (Grid, List, Carousel, Masonry)"
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:204
+msgid "Support for both Company Pages & Personal Profiles"
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:205
+msgid "Customizable design, colors, and typography"
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:206
+msgid "Smart caching for blazing fast load times"
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:210
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:237
+msgid "Buy Pro Now"
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:234
+#: includes/admin/class-xt-feed-for-linkedin-common.php:377
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:237
+msgid "Upgrade to"
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:234
+msgid "to access this page"
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:240
+msgid "Unlock all advanced features and schedule posts effortlessly."
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:349
 msgid "Don't Share This Post"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:353
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:355
 msgid "Share Message"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:357
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:359
 msgid "Share Account"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:362
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:364
 #: includes/admin/class-xt-feed-for-linkedin-sharing.php:83
 msgid "Share Now"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:372
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:374
 #: includes/admin/class-xt-feed-for-linkedin-ajax-function.php:354
 msgid "Post Shared History:"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:379
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:381
 #: includes/admin/class-xt-feed-for-linkedin-ajax-function.php:361
 #: includes/admin/class-xt-feed-for-linkedin-sharing.php:71
 msgid "Check out the shared post "
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:406
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:408
 msgid "Save Setting Successfully."
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-admin.php:527
+#: includes/admin/class-xt-feed-for-linkedin-admin.php:529
 msgid "Click here"
 msgstr ""
 
@@ -172,15 +224,28 @@ msgid "Authorized Accounts"
 msgstr ""
 
 #: includes/admin/class-xt-feed-for-linkedin-common.php:341
-#: includes/admin/class-xt-feed-for-linkedin-common.php:570
+#: includes/admin/class-xt-feed-for-linkedin-common.php:571
 msgid "Page"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-common.php:552
+#: includes/admin/class-xt-feed-for-linkedin-common.php:377
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:237
+msgid " Pro"
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-common.php:377
+msgid "to unlock sharing on this page"
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-common.php:381
+msgid "Buy Pro"
+msgstr ""
+
+#: includes/admin/class-xt-feed-for-linkedin-common.php:553
 msgid "Default Active Account"
 msgstr ""
 
-#: includes/admin/class-xt-feed-for-linkedin-common.php:574
+#: includes/admin/class-xt-feed-for-linkedin-common.php:575
 msgid "Profile"
 msgstr ""
 
@@ -188,7 +253,7 @@ msgstr ""
 msgid "Authorization failed or was cancelled."
 msgstr ""
 
-#: templates/admin/xt-feed-for-linkedin-general.php:28
+#: templates/admin/xt-feed-for-linkedin-general.php:22
 msgid "Connect Accounts"
 msgstr ""
 
@@ -254,6 +319,10 @@ msgstr ""
 
 #: templates/admin/xt-feed-for-linkedin-sharing-options.php:229
 msgid "Check this to share the post's featured image to LinkedIn along with the share message."
+msgstr ""
+
+#: templates/admin/xt-feed-for-linkedin-sharing-options.php:237
+msgid " to unlock the Post Featured Image sharing option"
 msgstr ""
 
 #: templates/admin/xt-feed-for-linkedin-sharing-options.php:252

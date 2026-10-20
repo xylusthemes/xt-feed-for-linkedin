@@ -109,7 +109,7 @@ class XT_Feed_Linkedin_Ajax {
                 'post_status'    => 'any',
                 'posts_per_page' => -1,
                 'fields'         => 'ids',
-                'meta_query'     => array(
+                'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
                     array(
                         'key'     => '_xtfefoli_schedule_share_account',
                         'value'   => $identifiers_to_cancel,
@@ -369,8 +369,9 @@ class XT_Feed_Linkedin_Ajax {
             wp_send_json_success( array( 'html' => $html ) );
         } else {
             global $wpdb;
-            $table_name = $wpdb->prefix . 'xt_feed_for_linkedin';
-            $error_log = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE post_id = %d ORDER BY id DESC LIMIT 1", $post_id ) );
+            $table_name = esc_sql( $wpdb->prefix . 'xt_feed_for_linkedin' );
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+            $error_log  = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table_name} WHERE post_id = %d ORDER BY id DESC LIMIT 1", $post_id ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
             if ( $error_log && $error_log->status === 'failed' ) {
                 wp_send_json_error( array( 'message' => 'Auto share failed: ' . $error_log->error_message ) );
             } else {

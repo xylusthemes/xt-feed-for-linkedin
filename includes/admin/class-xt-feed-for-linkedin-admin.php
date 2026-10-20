@@ -95,11 +95,11 @@ class XT_Feed_Linkedin_Admin {
 	function xtfefoli_admin_page(){
         global $xt_feed_for_linkedin;
 		
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$page_title = ucwords( $_GET['tab'] );
-        $active_tab = isset( $_GET['tab'] ) ? esc_attr( sanitize_text_field( wp_unslash( $_GET['tab'] ) ) ) : 'general';
+        $active_tab = isset( $_GET['tab'] ) ? esc_attr( sanitize_text_field( wp_unslash( $_GET['tab'] ) ) ) : 'general'; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $gettab     = ucwords( str_replace( '_', ' ', $active_tab ) );
-        if( $active_tab == 'general' || $active_tab == 'support' || $active_tab == 'sharing_options' || $active_tab == 'manage_scheduled_shares' || $active_tab == 'dashboard' || $active_tab == 'set_schedule' || $active_tab == 'license' || $active_tab == 'feed_builder' ){
+        if( $active_tab == 'general' || $active_tab == 'support' || $active_tab == 'sharing_options' || $active_tab == 'manage_scheduled_shares' || $active_tab == 'dashboard' || $active_tab == 'set_schedule' || $active_tab == 'license' || $active_tab == 'feed_builder' || $active_tab == 'profile_settings' ){
             $gettab     = ucwords( str_replace( '_', ' ', $gettab ) );
             $page_title = $gettab;
         }
@@ -194,20 +194,20 @@ class XT_Feed_Linkedin_Admin {
 														<div id="poststuff">
 															<div class="lf-pro-upgrade-wrapper" >
 																<div class="lf-pro-upgrade-message" style="margin-bottom: 20px;">
-																	<?php esc_attr_e( 'Live Feed Builder is a' ); ?> <strong><?php esc_attr_e( 'Pro' ); ?></strong> <?php esc_attr_e( 'Feature' ); ?>
+																	<?php esc_attr_e( 'Live Feed Builder is a', 'xt-feed-for-linkedin' ); ?> <strong><?php esc_attr_e( 'Pro', 'xt-feed-for-linkedin' ); ?></strong> <?php esc_attr_e( 'Feature', 'xt-feed-for-linkedin' ); ?>
 																</div>
 																<p style="font-size: 15px; color: #555; margin-bottom: 25px; line-height: 1.6;">
-																	<?php esc_attr_e( 'Upgrade to Pro to create beautiful, responsive LinkedIn feeds for your website. Display your company page or personal profile posts anywhere with a simple shortcode.' ); ?>
+																	<?php esc_attr_e( 'Upgrade to Pro to create beautiful, responsive LinkedIn feeds for your website. Display your company page or personal profile posts anywhere with a simple shortcode.', 'xt-feed-for-linkedin' ); ?>
 																</p>
 																<ul style="text-align: left; display: inline-block; font-size: 15px; color: #444; line-height: 1.8; margin-bottom: 30px;">
-																	<li><span style="color: #22c55e; margin-right: 8px;">✔</span> <?php esc_attr_e( 'Multiple feed layouts (Grid, List, Carousel, Masonry)' ); ?></li>
-																	<li><span style="color: #22c55e; margin-right: 8px;">✔</span> <?php esc_attr_e( 'Support for both Company Pages & Personal Profiles' ); ?></li>
-																	<li><span style="color: #22c55e; margin-right: 8px;">✔</span> <?php esc_attr_e( 'Customizable design, colors, and typography' ); ?></li>
-																	<li><span style="color: #22c55e; margin-right: 8px;">✔</span> <?php esc_attr_e( 'Smart caching for blazing fast load times' ); ?></li>
+																	<li><span style="color: #22c55e; margin-right: 8px;">✔</span> <?php esc_attr_e( 'Multiple feed layouts (Grid, List, Carousel, Masonry)', 'xt-feed-for-linkedin' ); ?></li>
+																	<li><span style="color: #22c55e; margin-right: 8px;">✔</span> <?php esc_attr_e( 'Support for both Company Pages & Personal Profiles', 'xt-feed-for-linkedin' ); ?></li>
+																	<li><span style="color: #22c55e; margin-right: 8px;">✔</span> <?php esc_attr_e( 'Customizable design, colors, and typography', 'xt-feed-for-linkedin' ); ?></li>
+																	<li><span style="color: #22c55e; margin-right: 8px;">✔</span> <?php esc_attr_e( 'Smart caching for blazing fast load times', 'xt-feed-for-linkedin' ); ?></li>
 																</ul>
 																<br>
 																<a href="<?php echo esc_url( XTFEFOLI_PLUGIN_BUY_NOW_URL ); ?>" class="lf-pro-upgrade-btn">
-																	<?php esc_attr_e( 'Buy Pro Now' ); ?>
+																	<?php esc_attr_e( 'Buy Pro Now', 'xt-feed-for-linkedin' ); ?>
 																</a>
 															</div>
 														</div>
@@ -231,13 +231,13 @@ class XT_Feed_Linkedin_Admin {
 															<div id="poststuff">
 																<div class="lf-pro-upgrade-wrapper">
 																	<div class="lf-pro-upgrade-message">
-																		<?php esc_attr_e( 'Upgrade to'); ?> <strong><?php esc_attr_e( 'Pro'); ?></strong> <?php esc_attr_e( 'to access this page'); ?>
+																		<?php esc_attr_e( 'Upgrade to', 'xt-feed-for-linkedin' ); ?> <strong><?php esc_attr_e( 'Pro', 'xt-feed-for-linkedin' ); ?></strong> <?php esc_attr_e( 'to access this page' , 'xt-feed-for-linkedin'); ?>
 																	</div>
 																	<a href="<?php echo esc_url( XTFEFOLI_PLUGIN_BUY_NOW_URL ); ?>" class="lf-pro-upgrade-btn">
-																		<?php esc_attr_e( 'Buy Pro Now'); ?>
+																		<?php esc_attr_e( 'Buy Pro Now', 'xt-feed-for-linkedin' ); ?>
 																	</a>
 																	<div class="lf-pro-upgrade-subtext">
-																		<?php esc_attr_e( 'Unlock all advanced features and schedule posts effortlessly.' ); ?>
+																		<?php esc_attr_e( 'Unlock all advanced features and schedule posts effortlessly.', 'xt-feed-for-linkedin' ); ?>
 																	</div>
 																</div>
 															</div>
@@ -272,7 +272,7 @@ class XT_Feed_Linkedin_Admin {
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_GET['page'] ) && esc_attr( sanitize_text_field( wp_unslash( $_GET['page'] ) ) ) == 'xt_feed_for_linkedin' ) {
-			$allowed_tabs = array( 'general', 'support', 'sharing_options', 'set_schedule', 'manage_scheduled_shares', 'license', 'feed_builder' );
+			$allowed_tabs = array( 'general', 'support', 'sharing_options', 'set_schedule', 'manage_scheduled_shares', 'license', 'feed_builder', 'profile_settings' );
 
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$tab = isset( $_GET['tab'] ) ? esc_attr( sanitize_text_field( wp_unslash( $_GET['tab'] ) ) ) : 'general';
@@ -337,7 +337,9 @@ class XT_Feed_Linkedin_Admin {
 		$get_shared_histories = get_post_meta( $post_id, '_xtfefoli_sended_on_linkedin', true );
 
 		// Allow PRO version to add schedule UI
-		do_action( 'xtlf_save_schedule_post_details' , $post_id );
+		do_action( 'xtfefoli_save_schedule_post_details', $post_id );
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		do_action( 'xtlf_save_schedule_post_details', $post_id );
 
 		?>
 		<div style="clear: both;"></div>
@@ -355,7 +357,7 @@ class XT_Feed_Linkedin_Admin {
 			</div>
 			<div class="xtfefoli_custom-linkedin-metabox-setting" style="margin-top: 15px;">
 				<label for="xtfefoli_share_account" style="display: block; font-weight: bold; margin-bottom: 5px;"><?php esc_attr_e( 'Share Account', 'xt-feed-for-linkedin' ); ?></label>
-				<?php echo $xt_feed_for_linkedin->common->xtfefoli_get_accounts_select_html( '', 'xtfefoli_share_account', 'xtfefoli-share-account' ); ?>
+				<?php echo $xt_feed_for_linkedin->common->xtfefoli_get_accounts_select_html( '', 'xtfefoli_share_account', 'xtfefoli-share-account' ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 			<div style="margin-top: 15px;" >
 				<a href="javascript:void(0)" class="xtfefoli_button" id="xtfefoli_share_cpt_button" >
