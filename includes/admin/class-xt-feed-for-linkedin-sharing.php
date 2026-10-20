@@ -76,7 +76,7 @@ class XT_Feed_Linkedin_Sharing {
                 <div class="xtfefoli-share-column-container" style="margin-top: 5px; display: flex; flex-direction: column; gap: 5px;">
                     <div><?php echo wp_kses_post( $status_text ); ?></div>
                     <div>
-                        <?php echo $xt_feed_for_linkedin->common->xtfefoli_get_accounts_select_html( '', 'xtfefoli_share_account_' . $post_id, 'xtfefoli-share-account' ); ?>
+                        <?php echo $xt_feed_for_linkedin->common->xtfefoli_get_accounts_select_html( '', 'xtfefoli_share_account_' . esc_attr( $post_id ), 'xtfefoli-share-account' ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                     </div>
                     <div>
                         <a class="xtfefoli_share_cpt_button_lt button button-small" href="javascript:void(0);" data-post_id="<?php echo esc_attr( $post_id ); ?>" data-post_type="<?php echo esc_attr( $xtfefoli_post_type ); ?>" >
@@ -86,7 +86,9 @@ class XT_Feed_Linkedin_Sharing {
                     <div class="if_lt_notice" style="margin-top:15px;"></div>
                 </div>
                 <?php
-                do_action( 'xtlf_save_schedule_post' , $post_id );
+                do_action( 'xtfefoli_save_schedule_post', $post_id );
+                // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+                do_action( 'xtlf_save_schedule_post', $post_id );
             }
         }
     }    
@@ -122,7 +124,7 @@ class XT_Feed_Linkedin_Sharing {
         $post_author   = get_the_author_meta( 'display_name', get_post_field( 'post_author', $post_id ) );
         $website_title = get_bloginfo( 'name' );
 
-        $total_limit = xtlf_is_pro() ? 2500 : 1000;
+        $total_limit = xtfefoli_is_pro() ? 2500 : 1000;
 
         // Base message without excerpt
         $base_message = str_replace(

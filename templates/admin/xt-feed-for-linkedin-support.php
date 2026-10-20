@@ -87,8 +87,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
                         <?php 
 							global $xt_feed_for_linkedin;
-                            $plugin_list = array();
-                            $plugin_list = $xt_feed_for_linkedin->common->xtfefoli_get_xyuls_themes_plugins();
+                            $xtfefoli_plugin_list = array();
+                            $xtfefoli_plugin_list = $xt_feed_for_linkedin->common->xtfefoli_get_xyuls_themes_plugins();
                         ?>
                         <div class="" style="margin-top: 20px;">
                             <h3 class="setting_bar"><?php esc_html_e( 'Plugins you should try','xt-feed-for-linkedin' ); ?></h3>
@@ -97,65 +97,65 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                                 <div class="lf-support-features2">
                                 
                                     <?php 
-                                        if( !empty( $plugin_list ) ){
-                                            foreach ( $plugin_list as $key => $plugin ) {
+                                        if( !empty( $xtfefoli_plugin_list ) ){
+                                            foreach ( $xtfefoli_plugin_list as $xtfefoli_key => $xtfefoli_plugin ) {
 
-                                                $plugin_slug = ucwords( str_replace( '-', ' ', $key ) );
-                                                $plugin_name =  $plugin['plugin_name'];
-                                                $plugin_description =  $plugin['description'];
-                                                if( $key == 'wp-event-aggregator' ){
-                                                    $plugin_icon = 'https://ps.w.org/'.$key.'/assets/icon-256x256.jpg';
+                                                $xtfefoli_plugin_slug = ucwords( str_replace( '-', ' ', $xtfefoli_key ) );
+                                                $xtfefoli_plugin_name =  $xtfefoli_plugin['plugin_name'];
+                                                $xtfefoli_plugin_description =  $xtfefoli_plugin['description'];
+                                                if( $xtfefoli_key == 'wp-event-aggregator' ){
+                                                    $xtfefoli_plugin_icon = 'https://ps.w.org/'.$xtfefoli_key.'/assets/icon-256x256.jpg'; // phpcs:ignore PluginCheck.CodeAnalysis.Offloading.OffloadedContent
                                                 } else {
-                                                    $plugin_icon = 'https://ps.w.org/'.$key.'/assets/icon-256x256.png';
+                                                    $xtfefoli_plugin_icon = 'https://ps.w.org/'.$xtfefoli_key.'/assets/icon-256x256.png'; // phpcs:ignore PluginCheck.CodeAnalysis.Offloading.OffloadedContent
                                                 }
 
                                                 // Check if the plugin is installed
-                                                $plugin_installed = false;
-                                                $plugin_active = false;
+                                                $xtfefoli_plugin_installed = false;
+                                                $xtfefoli_plugin_active = false;
                                                 include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-                                                $all_plugins = get_plugins();
-                                                $plugin_path = $key . '/' . $key . '.php';
+                                                $xtfefoli_all_plugins = get_plugins();
+                                                $xtfefoli_plugin_path = $xtfefoli_key . '/' . $xtfefoli_key . '.php';
 
-                                                if ( isset( $all_plugins[$plugin_path] ) ) {
-                                                    $plugin_installed = true;
-                                                    $plugin_active = is_plugin_active( $plugin_path );
+                                                if ( isset( $xtfefoli_all_plugins[$xtfefoli_plugin_path] ) ) {
+                                                    $xtfefoli_plugin_installed = true;
+                                                    $xtfefoli_plugin_active = is_plugin_active( $xtfefoli_plugin_path );
                                                 }
 
                                                 // Determine the status text
-                                                $status_text = 'Not Installed';
-                                                if ( $plugin_installed ) {
-                                                    $status_text = $plugin_active ? 'Active' : 'Installed (Inactive)';
+                                                $xtfefoli_status_text = 'Not Installed';
+                                                if ( $xtfefoli_plugin_installed ) {
+                                                    $xtfefoli_status_text = $xtfefoli_plugin_active ? 'Active' : 'Installed (Inactive)';
                                                 }
                                                 
                                                 ?>
                                                 <div class="lf-support-features-card2 lf-plugin">
                                                     <div class="lf-plugin-main">
                                                         <div>
-                                                            <img alt="<?php esc_attr( $plugin_slug . ' Image' ); ?>" src="<?php echo esc_url( $plugin_icon ); ?>">
+                                                            <img alt="<?php esc_attr( $xtfefoli_plugin_slug . ' Image' ); ?>" src="<?php echo esc_url( $xtfefoli_plugin_icon ); ?>">
                                                         </div>
                                                         <div>
-                                                            <div class="lf-main-name"><?php echo esc_attr( $plugin_name ); ?></div>
-                                                            <div><?php echo esc_attr( $plugin_description ); ?></div>
+                                                            <div class="lf-main-name"><?php echo esc_attr( $xtfefoli_plugin_name ); ?></div>
+                                                            <div><?php echo esc_attr( $xtfefoli_plugin_description ); ?></div>
                                                         </div>
                                                     </div>
                                                     <div class="lf-plugin-footer">
                                                         <div class="lf-footer-status">
                                                             <div class="lf-footer-status-label"><?php esc_html_e( 'Status : ', 'xt-feed-for-linkedin' ); ?></div>
-                                                            <div class="lf-footer-status lf-footer-status-<?php echo esc_attr( strtolower( str_replace(' ', '-', $status_text ) ) ); ?>">
-                                                                <span <?php echo ( $status_text == 'Active' ) ? 'style="color:green;"' : ''; ?>>
-                                                                    <?php echo esc_attr( $status_text ); ?>
+                                                            <div class="lf-footer-status lf-footer-status-<?php echo esc_attr( strtolower( str_replace(' ', '-', $xtfefoli_status_text ) ) ); ?>">
+                                                                <span <?php echo ( $xtfefoli_status_text == 'Active' ) ? 'style="color:green;"' : ''; ?>>
+                                                                    <?php echo esc_attr( $xtfefoli_status_text ); ?>
                                                                 </span>
                                                             </div>
                                                         </div>
                                                         <div class="lf-footer-action">
-                                                            <?php if ( !$plugin_installed ): ?>
+                                                            <?php if ( !$xtfefoli_plugin_installed ): ?>
                                                                 <a href="<?php echo esc_url( admin_url( 'plugin-install.php?s=xylus&tab=search&type=term' ) ); ?>" type="button" class="button button-primary"><?php esc_attr_e( 'Install Free Plugin', 'xt-feed-for-linkedin' ); ?></a>
-                                                            <?php elseif ( !$plugin_active ): ?>
+                                                            <?php elseif ( !$xtfefoli_plugin_active ): ?>
                                                                 <?php 
-                                                                    $activate_nonce = wp_create_nonce('activate_plugin_' . $plugin_slug); 
-                                                                    $activation_url = add_query_arg(array( 'action' => 'activate_plugin', 'plugin_slug' => $plugin_slug, 'nonce' => $activate_nonce, ), admin_url('admin.php?page=delete_all_actions&tab=by_support_help'));
+                                                                    $xtfefoli_activate_nonce = wp_create_nonce('activate_plugin_' . $xtfefoli_plugin_slug); 
+                                                                    $xtfefoli_activation_url = add_query_arg(array( 'action' => 'activate_plugin', 'plugin_slug' => $xtfefoli_plugin_slug, 'nonce' => $xtfefoli_activate_nonce, ), admin_url('admin.php?page=delete_all_actions&tab=by_support_help'));
                                                                 ?>
-                                                                <a href="<?php echo esc_url( admin_url( 'plugins.php?s='. $plugin_name ) ); ?>" class="button button-primary"><?php esc_attr_e( 'Activate Plugin', 'xt-feed-for-linkedin' ); ?></a>
+                                                                <a href="<?php echo esc_url( admin_url( 'plugins.php?s='. $xtfefoli_plugin_name ) ); ?>" class="button button-primary"><?php esc_attr_e( 'Activate Plugin', 'xt-feed-for-linkedin' ); ?></a>
                                                             <?php endif; ?>
                                                         </div>
                                                     </div>

@@ -374,11 +374,11 @@ class XT_Feed_Linkedin_Common {
                                                                 </a>
                                                             </div>
                                                             <div class="lf-card-center" style="color:#d9534f; font-weight:bold; font-size:12px;">
-                                                                <?php esc_attr_e( 'Upgrade to' ); ?><strong><?php esc_attr_e( ' Pro' ); ?></strong> <?php esc_attr_e( 'to unlock sharing on this page'); ?>
+                                                                <?php esc_attr_e( 'Upgrade to', 'xt-feed-for-linkedin' ); ?><strong><?php esc_attr_e( ' Pro', 'xt-feed-for-linkedin' ); ?></strong> <?php esc_attr_e( 'to unlock sharing on this page', 'xt-feed-for-linkedin' ); ?>
                                                             </div>
                                                             <div class="lf-card-right">
                                                                 <a target="_blank" href="<?php echo esc_url( 'https://xylusthemes.com/plugins/xt-feed-for-linkedin/' ); ?>" class="xtfefoli_button" style="padding: 4px 10px; font-size:12px;">
-                                                                    <?php esc_attr_e( 'Buy Pro' ); ?>
+                                                                    <?php esc_attr_e( 'Buy Pro', 'xt-feed-for-linkedin' ); ?>
                                                                 </a>
                                                             </div>
                                                         </div>
@@ -494,7 +494,7 @@ class XT_Feed_Linkedin_Common {
 
         $data = wp_parse_args( $data, $defaults );
 
-        $wpdb->insert(
+        $wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
             $table_name,
             $data,
             array(
@@ -528,6 +528,7 @@ class XT_Feed_Linkedin_Common {
             return false;
         }
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         return $wpdb->update(
             $table_name,
             $data,
@@ -644,7 +645,12 @@ class XT_Feed_Linkedin_Common {
     }
 }
 
-function xtlf_is_pro() {
+/**
+ * Check if the Pro version of XT Feed for LinkedIn is active.
+ *
+ * @return bool
+ */
+function xtfefoli_is_pro() {
 	if ( ! function_exists( 'is_plugin_active' ) ) {
 		include_once ABSPATH . 'wp-admin/includes/plugin.php';
 	}
@@ -652,4 +658,16 @@ function xtlf_is_pro() {
 		return true;
 	}
 	return false;
+}
+
+if ( ! function_exists( 'xtlf_is_pro' ) ) {
+	/**
+	 * Backward compatibility alias for xtfefoli_is_pro.
+	 *
+	 * @return bool
+	 */
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
+	function xtlf_is_pro() {
+		return xtfefoli_is_pro();
+	}
 }
