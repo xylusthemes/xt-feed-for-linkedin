@@ -4,7 +4,7 @@ Tags: Linkedin, feed, share, auto share, auto-publish
 Requires at least: 5.0
 Requires PHP: 7.6
 Tested up to: 7.1
-Stable tag: 1.0.4  
+Stable tag: 1.0.5  
 License: GPLv2 or later  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -90,6 +90,11 @@ By using this plugin, you agree to comply with LinkedIn's official policies:
 8. **Manual Share from Post Editor** – Customize and share individual posts directly from the WordPress editor while you're creating content.
 
 == Changelog ==  
+
+= 1.0.5 =
+* Added: LinkedIn Personal Profile feed support to fetch and display profile posts ( PRO ).
+* Added: "Include Re-posts" option to toggle shared and reposted content on or off ( PRO ).
+* Improved: Feed synchronization, security, and cache management.
 
 = 1.0.4 =
 * Added: Live LinkedIn Feed builder to display your company page updates on your website.
