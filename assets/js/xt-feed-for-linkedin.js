@@ -30,6 +30,11 @@
 	 */
 
 	jQuery(document).ready(function(){
+
+		// Ticked accounts inside a container. Empty array = use every active account.
+		function xtfefoliSelectedAccounts( $scope ) {
+			return $scope.find('.xtfefoli-account-cb:checked').map(function(){ return this.value; }).get();
+		}
 		
 		$('#xtfefoli_dont_share_post_on_linkedin').on('change', function() {
 			$('.xtfefoli_inside').toggle(!this.checked);
@@ -43,7 +48,7 @@
             let nonce        = $('#xtfefoli_linkedin_feedpress_meta_box_nonce').val();
             let xtfefoli_post_type = $('#xtfefoli_post_type').val();
     
-            let shareAccount = $(this).closest('.xtfefoli_inside').find('.xtfefoli-share-account').val() || '';
+            let shareAccount = xtfefoliSelectedAccounts( $(this).closest('.xtfefoli_inside') );
     
             if (!shareMessage.trim()) {
                 $('#if_meta_box_notice').text('Please enter a message before sharing.').css('color', 'red');
@@ -102,7 +107,7 @@
             });
         });
 
-        $('.xtfefoli_share_cpt_button_lt').on('click', function (e) {
+        $(document).on('click', '.xtfefoli_share_cpt_button_lt', function (e) {
             e.preventDefault();
     
             let button = $(this);
@@ -110,7 +115,7 @@
             let xtfefoli_post_type = button.data('post_type');
             let nonce = $('#xtfefoli_linkedin_feedpress_lt_nonce').val();
             let noticeBox = button.closest('.xtfefoli-share-column-container').find('.if_lt_notice'); // Get notice box for this row
-            let shareAccount = button.closest('.xtfefoli-share-column-container').find('.xtfefoli-share-account').val() || '';
+            let shareAccount = xtfefoliSelectedAccounts( button.closest('.xtfefoli-share-column-container') );
     
             $.ajax({
                 url: ajaxurl, // WordPress AJAX URL
@@ -123,13 +128,25 @@
                     xtfefoli_share_security: nonce
                 },
                 beforeSend: function () {
+                    button.prop('disabled', true).addClass('updating-message');
                     noticeBox.html('<div class="notice notice-primary is-dismissible"><p>Sharing...</p></div>');
                 },
                 success: function (response) {
+                    button.prop('disabled', false).removeClass('updating-message');
                     if (response.success) {
+                        let msg  = (response.data && response.data.message) ? response.data.message : 'Post shared successfully!';
+                        let cell = button.closest('td');
+                        if (response.data && response.data.history_html) {
+                            let historyHtml = response.data.history_html;
+                            cell.find('.xtfefoli-column-card, .xtfefoli-share-column-container, .xtfefoli-schedule-box, .xtfefoli-shared-links').remove();
+                            cell.html(historyHtml);
+                            cell.prepend('<div class="xtfefoli-shared-notice" style="margin-bottom:6px;"><div class="notice notice-success inline" style="margin:0;"><p>' + msg + '</p></div></div>');
+                            setTimeout(function () { cell.find('.xtfefoli-shared-notice').fadeOut('slow', function () { $(this).remove(); }); }, 4000);
+                            return;
+                        }
                         let postText = $('.xtfefoli_post_' + postID );
                         postText.html('<span><strong>Shared</strong></span>');
-                        noticeBox.html('<div class="notice notice-success is-dismissible"><p>Post shared successfully!</p></div>');
+                        noticeBox.html('<div class="notice notice-success is-dismissible"><p>' + msg + '</p></div>');
                     } else {
                         noticeBox.html(`<div class="notice notice-error is-dismissible"><p>${response.data}</p></div>`);
                     }
@@ -142,6 +159,7 @@
                     }, 3000);
                 },
                 error: function () {
+                    button.prop('disabled', false).removeClass('updating-message');
                     noticeBox.html('<div class="notice notice-error is-dismissible"><p>An error occurred. Please try again.</p></div>');
     
                     // Remove the notice after 3 seconds
@@ -151,6 +169,30 @@
                         });
                     }, 3000);
                 }
+            });
+        });
+
+        // History accordion toggle
+        $(document).on('click', '.xtfefoli-history-toggle', function (e) {
+            e.preventDefault();
+            let $btn = $(this);
+            let $drawer = $btn.next('.xtfefoli-history-drawer');
+            $drawer.slideToggle(150, function () {
+                let isExpanded = $drawer.is(':visible');
+                $btn.toggleClass('active', isExpanded);
+                $btn.attr('aria-expanded', isExpanded ? 'true' : 'false');
+            });
+        });
+
+        // Share again toggle
+        $(document).on('click', '.xtfefoli-btn-share-again', function (e) {
+            e.preventDefault();
+            let $btn = $(this);
+            let targetId = $btn.data('target');
+            let $drawer = targetId ? $(targetId) : $btn.closest('.xtfefoli-column-card').find('.xtfefoli-action-drawer');
+            $drawer.slideToggle(180, function () {
+                let isVisible = $drawer.is(':visible');
+                $btn.toggleClass('active', isVisible);
             });
         });
 

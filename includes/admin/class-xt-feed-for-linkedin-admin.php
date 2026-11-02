@@ -95,9 +95,8 @@ class XT_Feed_Linkedin_Admin {
 	function xtfefoli_admin_page(){
         global $xt_feed_for_linkedin;
 		
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$page_title = ucwords( $_GET['tab'] );
         $active_tab = isset( $_GET['tab'] ) ? esc_attr( sanitize_text_field( wp_unslash( $_GET['tab'] ) ) ) : 'general'; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $page_title = ucwords( $active_tab );
         $gettab     = ucwords( str_replace( '_', ' ', $active_tab ) );
         if( $active_tab == 'general' || $active_tab == 'support' || $active_tab == 'sharing_options' || $active_tab == 'manage_scheduled_shares' || $active_tab == 'dashboard' || $active_tab == 'set_schedule' || $active_tab == 'license' || $active_tab == 'feed_builder' || $active_tab == 'profile_settings' ){
             $gettab     = ucwords( str_replace( '_', ' ', $gettab ) );
@@ -117,7 +116,6 @@ class XT_Feed_Linkedin_Admin {
                         <div class="ajax_xtfefoli_notice"></div>
                         <div id="postbox-container-2" class="postbox-container">
                             <div class="lf-app">
-                                <?php if ( 'feed_builder' !== $active_tab || ! xtlf_is_pro() ) : ?>
                                 <div class="lf-tabs">
                                     <div class="tabs-scroller">
                                         <div class="var-tabs var-tabs--item-horizontal var-tabs--layout-horizontal-padding">
@@ -160,7 +158,6 @@ class XT_Feed_Linkedin_Admin {
                                         </div>
                                     </div>
                                 </div>
-                                <?php endif; ?>
                             </div>
     
                             <?php
@@ -356,7 +353,7 @@ class XT_Feed_Linkedin_Admin {
 				<textarea rows="8" name="xtfefoli_global_sharing_message" id="xtfefoli_custom-share-message" style="width: 100%; padding: 5px;"><?php echo esc_attr( $lfgsm_option ); ?></textarea>
 			</div>
 			<div class="xtfefoli_custom-linkedin-metabox-setting" style="margin-top: 15px;">
-				<label for="xtfefoli_share_account" style="display: block; font-weight: bold; margin-bottom: 5px;"><?php esc_attr_e( 'Share Account', 'xt-feed-for-linkedin' ); ?></label>
+				<label style="display: block; font-weight: bold; margin-bottom: 5px;"><?php esc_attr_e( 'Share Accounts', 'xt-feed-for-linkedin' ); ?></label>
 				<?php echo $xt_feed_for_linkedin->common->xtfefoli_get_accounts_select_html( '', 'xtfefoli_share_account', 'xtfefoli-share-account' ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 			<div style="margin-top: 15px;" >
@@ -378,7 +375,7 @@ class XT_Feed_Linkedin_Admin {
 								$post_url = esc_url( 'https://www.linkedin.com/feed/update/' . $get_sh['id'] );
 								$formatted_date = gmdate( 'Y-m-d H:i:s', $get_sh['shared_post_datetime'] );				
 								echo '<div style="margin: 5px 0 0 5px;">
-										<strong><a href="' . esc_url( $post_url ) . '" target="_blank" style="color: #0049b3; text-decoration: none;">' . esc_attr__( 'Check out the shared post ', 'xt-feed-for-linkedin' ) . '</a> ( ' . esc_html( $formatted_date ) . ' ) </strong>
+										<strong><a href="' . esc_url( $post_url ) . '" target="_blank" style="color: #0049b3; text-decoration: none;">' . esc_attr__( 'Check out the shared post ', 'xt-feed-for-linkedin' ) . '</a>' . $xt_feed_for_linkedin->sharing->xtfefoli_history_account_suffix( $get_sh ) . ' ( ' . esc_html( $formatted_date ) . ' ) </strong>
 										</div>';
 							}
 						}
@@ -402,6 +399,11 @@ class XT_Feed_Linkedin_Admin {
 		if ( isset( $_POST['xtfefoli_so_action'] ) && 'xtfefoli_save_so_settings' === sanitize_text_field( wp_unslash( $_POST['xtfefoli_so_action'] ) ) && check_admin_referer( 'xtfefoli_so_setting_form_nonce_action', 'xtfefoli_so_setting_form_nonce' ) ) { // input var okay.
             $xtfefoli_global_message = isset( $_POST['xtfefoli_global_sharing_message'] ) ? wp_kses_post( wp_unslash( $_POST['xtfefoli_global_sharing_message'] ) ) : '';
 			$xtfefoli_so_options     = isset( $_POST['xtfefoli_sharing_option'] ) ? $this->sanitize_recursive( wp_unslash( $_POST['xtfefoli_sharing_option'] ) ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			// Description character limit: whole number, 0 = auto, never above LinkedIn's total limit for this plan.
+			$xtfefoli_max_limit = function_exists( 'xtfefoli_is_pro' ) && xtfefoli_is_pro() ? 2500 : 1000;
+			if ( isset( $xtfefoli_so_options['xtfefoli_desc_limit'] ) ) {
+				$xtfefoli_so_options['xtfefoli_desc_limit'] = min( absint( $xtfefoli_so_options['xtfefoli_desc_limit'] ), $xtfefoli_max_limit );
+			}
 			update_option( 'xtfefoli_global_sharing_message', $xtfefoli_global_message );
 			update_option( XTFEFOLI_OPTIONS, $xtfefoli_so_options );
 			
