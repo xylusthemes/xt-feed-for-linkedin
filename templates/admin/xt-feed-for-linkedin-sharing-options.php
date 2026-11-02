@@ -19,6 +19,9 @@ $xtfefoli_lfgsm_option   = get_option( 'xtfefoli_global_sharing_message', $xtfef
 $xtfefoli_selected_cpts  = isset( $xtfefoli_so_options['xtfefoli_linkedin_feedpress_cpts'] ) ? $xtfefoli_so_options['xtfefoli_linkedin_feedpress_cpts'] : array() ;
 $xtfefoli_bddspol     = isset( $xtfefoli_so_options['xtfefoli_bddspol'] ) ? $xtfefoli_so_options['xtfefoli_bddspol'] : 'no' ;
 $xtfefoli_postfimage  = isset( $xtfefoli_so_options['xtfefoli_postfimage'] ) ? $xtfefoli_so_options['xtfefoli_postfimage'] : 'no' ;
+$xtfefoli_total_limit  = ( function_exists( 'xtfefoli_is_pro' ) && xtfefoli_is_pro() ) ? 2500 : 1000;
+$xtfefoli_desc_limit   = isset( $xtfefoli_so_options['xtfefoli_desc_limit'] ) ? absint( $xtfefoli_so_options['xtfefoli_desc_limit'] ) : 0;
+$xtfefoli_html_support = isset( $xtfefoli_so_options['xtfefoli_html_support'] ) ? $xtfefoli_so_options['xtfefoli_html_support'] : 'no';
 
 
 
@@ -164,6 +167,56 @@ $xtfefoli_postfimage  = isset( $xtfefoli_so_options['xtfefoli_postfimage'] ) ? $
         </div>
     </div>
 
+    <div class="form-table">
+        <div class="lf-card mt-2">
+            <div class="header">
+                <div class="text">
+                    <div class="header-icon"></div>
+                    <div class="header-title">
+                        <span><?php esc_attr_e( 'Post Content Settings', 'xt-feed-for-linkedin' ); ?></span>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div style="margin-bottom: 22px;">
+                    <label for="xtfefoli_desc_limit" style="display: inline-flex; align-items: center; font-weight: bold; margin-bottom: 8px;">
+                        <?php esc_attr_e( 'Description Character Limit', 'xt-feed-for-linkedin' ); ?>
+                        <span class="xtfefoli-tooltip-wrap">
+                            <span class="xtfefoli-tooltip-icon">?</span>
+                            <span class="xtfefoli-tooltip-text"><?php esc_html_e( 'Maximum number of characters used for the [POST_EXCERPT] (post description) part of the share message. Longer content is cut and ends with "...". Set 0 to use all the room LinkedIn allows.', 'xt-feed-for-linkedin' ); ?></span>
+                        </span>
+                    </label>
+                    <div>
+                        <input type="number" min="0" max="<?php echo esc_attr( $xtfefoli_total_limit ); ?>" step="1" id="xtfefoli_desc_limit" name="xtfefoli_sharing_option[xtfefoli_desc_limit]" value="<?php echo esc_attr( $xtfefoli_desc_limit ); ?>" style="width: 120px;" />
+                        <span style="color: #6b7280; font-size: 13px; margin-left: 8px;">
+                            <?php
+                            /* translators: %d: LinkedIn total character limit */
+                            echo esc_html( sprintf( __( '0 = auto (fills the remaining space). Maximum for your plan: %d characters in total per post.', 'xt-feed-for-linkedin' ), $xtfefoli_total_limit ) );
+                            ?>
+                        </span>
+                    </div>
+                </div>
+
+                <div>
+                    <input type="checkbox" id="xtfefoli_html_support" <?php checked( $xtfefoli_html_support, 'on' ); ?> name="xtfefoli_sharing_option[xtfefoli_html_support]" />
+                    <label for="xtfefoli_html_support" style="display: inline-flex; align-items: center; vertical-align: middle; font-weight: bold;">
+                        <?php esc_attr_e( 'HTML support in content', 'xt-feed-for-linkedin' ); ?>
+                        <span class="xtfefoli-tooltip-wrap">
+                            <span class="xtfefoli-tooltip-icon">?</span>
+                            <span class="xtfefoli-tooltip-text"><?php esc_html_e( 'LinkedIn does not render real HTML, so the HTML in your share message and post content is converted into LinkedIn-friendly text instead of being stripped.', 'xt-feed-for-linkedin' ); ?></span>
+                        </span>
+                    </label>
+                    <p style="margin: 6px 0 0 24px; color: #6b7280; font-size: 13px; line-height: 1.5;">
+                        <?php esc_html_e( 'Paragraphs and line breaks are kept, list items become "• item", links become "text (url)", and bold / italic text is converted to bold / italic characters. When off, all HTML is removed.', 'xt-feed-for-linkedin' ); ?>
+                        <span style="display: block; margin-top: 5px; font-size: 12px; color: #b45309;">
+                            <strong><?php esc_html_e( 'Please Note:', 'xt-feed-for-linkedin' ); ?></strong> <?php esc_html_e( 'Full HTML is not supported because the LinkedIn API does not allow HTML (only plain text is supported).', 'xt-feed-for-linkedin' ); ?>
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <?php
         global $wp_post_types;
         $xtfefoli_post_types = get_post_types( [ 'public' => true], 'objects' );
@@ -301,11 +354,21 @@ document.addEventListener('DOMContentLoaded', function() {
         return text.replace(/[&<>"']/g, function(m) { return map[m]; });
     }
 
+    const limitInput = document.getElementById('xtfefoli_desc_limit');
+
     function updatePreview() {
         let text = textarea.value;
         for (const [key, value] of Object.entries(demoData)) {
+            let replacement = value;
+            // Show the effect of "Description Character Limit" on the demo description
+            if (key === '[POST_EXCERPT]' && limitInput) {
+                const limit = parseInt(limitInput.value, 10);
+                if (limit > 0 && replacement.length > limit) {
+                    replacement = replacement.substring(0, Math.max(0, limit - 3)).trim() + '...';
+                }
+            }
             // Use split/join for all occurrences
-            text = text.split(key).join(value);
+            text = text.split(key).join(replacement);
         }
         
         // Escape HTML to prevent XSS in preview, then convert URLs to links, then newlines to <br>
@@ -325,6 +388,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     textarea.addEventListener('input', updatePreview);
+    if (limitInput) { limitInput.addEventListener('input', updatePreview); }
     updatePreview(); // Initial render
     
     // Make keywords clickable

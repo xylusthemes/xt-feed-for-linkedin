@@ -96,23 +96,11 @@ class XT_Feed_Linkedin_Auto_Share {
             return;
         }
 
-        $sharing_type    = 'auto_publish';
-        $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id, $sharing_type );
-    
-        if ( $linkedin_result && !isset( $linkedin_result['message'] ) ) {
-    
-            $existing_data = get_post_meta( $post_id, '_xtfefoli_sended_on_linkedin', true );
-    
-            // Ensure it's an array
-            if ( ! is_array( $existing_data ) ) { $existing_data = []; }
-            $existing_data[] = array( 'id' => $linkedin_result, 'shared_post_datetime' => time() );
-    
-            //save/update post meta
-            update_post_meta( $post_id, '_xtfefoli_sended_on_linkedin', $existing_data );
-            update_post_meta( $post_id, '_xtfefoli_shared_on_linkedin', 1 );
-            update_post_meta( $post_id, '_xtfefoli_dont_share_post_linkedin', 1 );
-            update_post_meta( $post_id, '_xtfefoli_share_message', $sanitized_message );
-    
+        // Auto publish goes to every active account.
+        $outcome = $xt_feed_for_linkedin->sharing->xtfefoli_share_post_to_accounts( $share_message, $post_id, 'auto_publish' );
+
+        if ( ! empty( $outcome['shared'] ) ) {
+            $xt_feed_for_linkedin->sharing->xtfefoli_record_shared_results( $post_id, $outcome, $sanitized_message );
         }
     }
 }

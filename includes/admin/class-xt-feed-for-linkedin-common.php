@@ -539,48 +539,226 @@ class XT_Feed_Linkedin_Common {
     }
 
     /**
-     * Get HTML for accounts dropdown
+     * Build a usable account array (token + type + id) from a stored user/page row.
      *
-     * @param string $selected_value Selected account identifier
-     * @param string $name Name/ID of select input
-     * @param string $class Additional CSS classes
-     * @return string HTML select element
+     * @param array $user           Stored LinkedIn user/page row.
+     * @param array $email_token_map Map of email => access token.
+     * @return array|null
+     */
+    private function xtfefoli_build_account_from_row( $user, $email_token_map ) {
+        $is_page = isset( $user['versionTag'] );
+        $email   = isset( $user['email'] ) ? $user['email'] : '';
+        $token   = ! empty( $user['access_token'] ) ? $user['access_token'] : ( isset( $email_token_map[ $email ] ) ? $email_token_map[ $email ] : null );
+
+        if ( empty( $token ) ) {
+            return null;
+        }
+
+        if ( $is_page ) {
+            $page_token = isset( $user['access_token'] ) ? $user['access_token'] : '';
+            if ( ! xtlf_is_pro() && empty( $page_token ) ) {
+                return null;
+            }
+            return array(
+                'token'      => $token,
+                'type'       => 'page',
+                'page_id'    => $user['id'],
+                'identifier' => 'page:' . $user['id'],
+            );
+        }
+
+        return array(
+            'token'      => $token,
+            'type'       => 'profile',
+            'user_id'    => $user['sub'],
+            'identifier' => 'profile:' . $user['sub'],
+        );
+    }
+
+    /**
+     * Get ALL active accounts (profiles and pages) that can be used for sharing.
+     *
+     * @since 1.0.6
+     * @return array List of account arrays: token, type, user_id|page_id, identifier.
+     */
+    public function xtfefoli_get_active_accounts() {
+        $users = get_option( 'xtfefoli_linkedin_user_data', true );
+        if ( empty( $users ) || ! is_array( $users ) ) {
+            return array();
+        }
+
+        $email_token_map = array();
+        foreach ( $users as $user ) {
+            if ( ! empty( $user['email'] ) && ! empty( $user['access_token'] ) ) {
+                $email_token_map[ $user['email'] ] = $user['access_token'];
+            }
+        }
+
+        $accounts = array();
+        foreach ( $users as $user ) {
+            if ( ! isset( $user['is_active'] ) || 'yes' !== $user['is_active'] ) {
+                continue;
+            }
+            $account = $this->xtfefoli_build_account_from_row( $user, $email_token_map );
+            if ( $account ) {
+                $accounts[ $account['identifier'] ] = $account;
+            }
+        }
+
+        return array_values( $accounts );
+    }
+
+    /**
+     * Normalize account selection to a clean array of "type:id" identifiers.
+     * Accepts an array, a comma separated string, a single identifier (legacy)
+     * or "default"/empty (which means "use every active account").
+     *
+     * @since 1.0.6
+     * @param string|array $value Raw value.
+     * @return array
+     */
+    public function xtfefoli_normalize_account_identifiers( $value ) {
+        if ( is_string( $value ) ) {
+            $value = '' === $value ? array() : explode( ',', $value );
+        }
+        if ( ! is_array( $value ) ) {
+            return array();
+        }
+
+        $identifiers = array();
+        foreach ( $value as $item ) {
+            if ( ! is_scalar( $item ) ) {
+                continue;
+            }
+            $item = trim( sanitize_text_field( (string) $item ) );
+            if ( '' === $item || 'default' === $item || false === strpos( $item, ':' ) ) {
+                continue;
+            }
+            $identifiers[] = $item;
+        }
+
+        return array_values( array_unique( $identifiers ) );
+    }
+
+    /**
+     * Resolve the accounts a share should go to.
+     * Empty / "default" selection means every active account.
+     *
+     * @since 1.0.6
+     * @param string|array $target Identifier(s) like "profile:abc" / "page:123".
+     * @return array List of account arrays (see xtfefoli_get_active_accounts()).
+     */
+    public function xtfefoli_resolve_target_accounts( $target = array() ) {
+        $identifiers = $this->xtfefoli_normalize_account_identifiers( $target );
+
+        if ( empty( $identifiers ) ) {
+            return $this->xtfefoli_get_active_accounts();
+        }
+
+        $accounts = array();
+        foreach ( $identifiers as $identifier ) {
+            $account = $this->xtfefoli_get_account_token_by_identifier( $identifier );
+            if ( is_array( $account ) ) {
+                $account['identifier']       = $identifier;
+                $accounts[ $identifier ]     = $account;
+            }
+        }
+
+        return array_values( $accounts );
+    }
+
+    /**
+     * Human readable label for an account identifier.
+     *
+     * @since 1.0.6
+     * @param string $identifier "profile:<sub>" or "page:<id>".
+     * @return string
+     */
+    public function xtfefoli_get_account_label( $identifier ) {
+        $users = get_option( 'xtfefoli_linkedin_user_data' );
+        $parts = explode( ':', (string) $identifier, 2 );
+
+        if ( ! empty( $users ) && is_array( $users ) && 2 === count( $parts ) ) {
+            foreach ( $users as $user ) {
+                $is_page = isset( $user['versionTag'] );
+                $id      = $is_page ? ( isset( $user['id'] ) ? $user['id'] : '' ) : ( isset( $user['sub'] ) ? $user['sub'] : '' );
+                if ( ( $is_page ? 'page' : 'profile' ) === $parts[0] && (string) $id === (string) $parts[1] ) {
+                    if ( $is_page ) {
+                        return isset( $user['given_name'] ) ? $user['given_name'] : (string) $id;
+                    }
+                    $given  = isset( $user['given_name'] ) ? $user['given_name'] : '';
+                    $family = isset( $user['family_name'] ) ? $user['family_name'] : '';
+                    $name   = trim( ucfirst( $given ) . ' ' . ucfirst( $family ) );
+                    return '' !== $name ? $name : (string) $id;
+                }
+            }
+        }
+
+        return (string) $identifier;
+    }
+
+    /**
+     * Get HTML for the multi-account checklist.
+     *
+     * Nothing checked means "use every active account" (same as the old "default" option).
+     *
+     * @param string|array $selected_value Selected account identifier(s).
+     * @param string       $name           Field key (kept for backward compatibility, used as data attribute).
+     * @param string       $class          Additional CSS classes.
+     * @return string HTML
      */
     public function xtfefoli_get_accounts_select_html( $selected_value = '', $name = 'xtfefoli_share_account', $class = '' ) {
-        $linkedin_users = get_option('xtfefoli_linkedin_user_data');
-        
-        $html = '<select name="' . esc_attr( $name ) . '" id="' . esc_attr( $name ) . '" class="xtfefoli-account-select ' . esc_attr( $class ) . '" style="max-width: 200px; min-width: 150px;">';
-        $html .= '<option value="default">' . esc_html__( 'Default Active Account', 'xt-feed-for-linkedin' ) . '</option>';
-        
-        if ( !empty( $linkedin_users ) && is_array( $linkedin_users ) ) {
+        $linkedin_users = get_option( 'xtfefoli_linkedin_user_data' );
+        $selected       = $this->xtfefoli_normalize_account_identifiers( $selected_value );
+        $items          = '';
+
+        if ( ! empty( $linkedin_users ) && is_array( $linkedin_users ) ) {
             foreach ( $linkedin_users as $user ) {
                 $is_page = isset( $user['versionTag'] );
-                
+
                 if ( $is_page ) {
-                    $page_token = isset($user['access_token']) ? $user['access_token'] : '';
+                    $page_token = isset( $user['access_token'] ) ? $user['access_token'] : '';
                     if ( ! xtlf_is_pro() && empty( $page_token ) ) {
                         continue;
                     }
                 }
 
-                $type    = $is_page ? 'page' : 'profile';
-                $id      = $is_page ? ( $user['id'] ?? '' ) : ( $user['sub'] ?? '' );
-                $value   = $type . ':' . $id;
-                
+                $type  = $is_page ? 'page' : 'profile';
+                $id    = $is_page ? ( isset( $user['id'] ) ? $user['id'] : '' ) : ( isset( $user['sub'] ) ? $user['sub'] : '' );
+                $value = $type . ':' . $id;
+
                 if ( $is_page ) {
-                    $label = ( $user['given_name'] ?? '' ) . ' (' . esc_html__( 'Page', 'xt-feed-for-linkedin' ) . ')';
+                    $name_str   = isset( $user['given_name'] ) ? $user['given_name'] : '';
+                    $type_str   = esc_html__( 'Page', 'xt-feed-for-linkedin' );
+                    $type_class = 'xtfefoli-type-page';
                 } else {
-                    $given = $user['given_name'] ?? '';
-                    $family = $user['family_name'] ?? '';
-                    $label = trim( ucfirst( $given ) . ' ' . ucfirst( $family ) ) . ' (' . esc_html__( 'Profile', 'xt-feed-for-linkedin' ) . ')';
+                    $given      = isset( $user['given_name'] ) ? $user['given_name'] : '';
+                    $family     = isset( $user['family_name'] ) ? $user['family_name'] : '';
+                    $name_str   = trim( ucfirst( $given ) . ' ' . ucfirst( $family ) );
+                    $type_str   = esc_html__( 'Profile', 'xt-feed-for-linkedin' );
+                    $type_class = 'xtfefoli-type-profile';
                 }
-                
-                $selected = selected( $selected_value, $value, false );
-                $html .= '<option value="' . esc_attr( $value ) . '" ' . $selected . '>' . esc_html( $label ) . '</option>';
+
+                $items .= '<label class="xtfefoli-account-item">'
+                    . '<input type="checkbox" class="xtfefoli-account-cb" value="' . esc_attr( $value ) . '"' . checked( in_array( $value, $selected, true ), true, false ) . ' /> '
+                    . '<span class="xtfefoli-account-name">' . esc_html( $name_str ) . '</span>'
+                    . '<span class="xtfefoli-account-type ' . esc_attr( $type_class ) . '">' . esc_html( $type_str ) . '</span>'
+                    . '</label>';
             }
         }
-        
-        $html .= '</select>';
+
+        $html = '<div class="xtfefoli-account-list ' . esc_attr( $class ) . '" data-name="' . esc_attr( $name ) . '">';
+        if ( '' === $items ) {
+            $html .= '<span class="xtfefoli-account-empty">' . esc_html__( 'No authorized accounts found.', 'xt-feed-for-linkedin' ) . '</span>';
+        } else {
+            $html .= $items;
+        }
+        $html .= '</div>';
+
+        if ( '' !== $items ) {
+            $html .= '<div class="xtfefoli-account-hint"><span class="dashicons dashicons-info-outline"></span> ' . esc_html__( 'Leave all unchecked to use every active account.', 'xt-feed-for-linkedin' ) . '</div>';
+        }
+
         return $html;
     }
 

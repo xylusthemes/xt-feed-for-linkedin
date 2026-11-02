@@ -39,7 +39,8 @@
 		});
 
 		$(document).on("change", ".lf-status-toggle", function () {
-			var isChecked = $(this).prop("checked");
+			var $this     = $(this);
+			var isChecked = $this.prop("checked");
 			var userSub   = $(this).data("sub");
 			var userEmail = $(this).data("email");
 		
@@ -54,17 +55,12 @@
 					xtfefoli_security: xtfefoli_ajax.update_status_nonce,
 				},
 				success: function (response) {
-					if ( response.success ) {			
-						if ( isChecked ){
-							$(".lf-status-toggle").prop("checked", false);
-							$(".lf-status-toggle").each(function () {
-								if ($(this).data("sub") == userSub) {
-									$(this).prop("checked", true);
-								}
-							});
-						}
-					} else {
-						$(this).prop("checked", !isChecked);
+					// Multiple accounts can stay active at the same time, so other toggles are left untouched.
+					if ( ! response.success ) {
+						$this.prop("checked", !isChecked);
+						var lfFailHtml = `<div class="notice notice-error lf-notice is-dismissible"><p>${response.data && response.data.message ? response.data.message : 'An error occurred. Please try again.'}</p></div>`;
+						$(".ajax_xtfefoli_notice").html( lfFailHtml );
+						return;
 					}
 
 					var lfsuccessHtml = `<div class="notice notice-success lf-notice is-dismissible"><p>${response.data.message}</p></div>`;

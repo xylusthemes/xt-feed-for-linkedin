@@ -102,8 +102,10 @@ class XT_Feed_Linkedin_Ajax {
             return true;
         });
 
-        // Cancel scheduled posts for removed accounts
+        // Remove deleted accounts from scheduled posts; cancel the schedule only when no selected account is left.
         if ( ! empty( $identifiers_to_cancel ) ) {
+            global $xt_feed_for_linkedin;
+
             $scheduled_posts = get_posts( array(
                 'post_type'      => 'any',
                 'post_status'    => 'any',
@@ -112,21 +114,30 @@ class XT_Feed_Linkedin_Ajax {
                 'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
                     array(
                         'key'     => '_xtfefoli_schedule_share_account',
-                        'value'   => $identifiers_to_cancel,
-                        'compare' => 'IN'
+                        'compare' => 'EXISTS'
                     )
                 )
             ) );
 
-            if ( ! empty( $scheduled_posts ) ) {
-                foreach ( $scheduled_posts as $p_id ) {
-                    delete_post_meta( $p_id, '_xtfefoli_schedule_enabled' );
-                    delete_post_meta( $p_id, '_xtfefoli_schedule_datetime' );
-                    delete_post_meta( $p_id, '_xtfefoli_schedule_share_account' );
-                    
-                    if ( function_exists( 'as_unschedule_all_actions' ) ) {
-                        as_unschedule_all_actions( 'xtfefoli_share_post_cron', array( $p_id ), 'xtfefoli_share_group' );
-                    }
+            foreach ( $scheduled_posts as $p_id ) {
+                $selected  = $xt_feed_for_linkedin->common->xtfefoli_normalize_account_identifiers( get_post_meta( $p_id, '_xtfefoli_schedule_share_account', true ) );
+                $remaining = array_values( array_diff( $selected, $identifiers_to_cancel ) );
+
+                if ( count( $remaining ) === count( $selected ) ) {
+                    continue; // This schedule doesn't use the removed account(s).
+                }
+
+                if ( ! empty( $remaining ) ) {
+                    update_post_meta( $p_id, '_xtfefoli_schedule_share_account', $remaining );
+                    continue;
+                }
+
+                delete_post_meta( $p_id, '_xtfefoli_schedule_enabled' );
+                delete_post_meta( $p_id, '_xtfefoli_schedule_datetime' );
+                delete_post_meta( $p_id, '_xtfefoli_schedule_share_account' );
+
+                if ( function_exists( 'as_unschedule_all_actions' ) ) {
+                    as_unschedule_all_actions( 'xtfefoli_share_post_cron', array( $p_id ), 'xtfefoli_share_group' );
                 }
             }
         }
@@ -179,12 +190,12 @@ class XT_Feed_Linkedin_Ajax {
                 $match = true;
             }
             
+            // Multiple accounts can be active at the same time; only touch the toggled one.
             if ( $match ) {
-                $user['is_active'] = $is_active;
-            } else if ($is_active === 'yes') {
-                $user['is_active'] = 'no';
+                $user['is_active'] = ( 'yes' === $is_active ) ? 'yes' : 'no';
             }
         }
+        unset( $user );
     
         // Save updated data
         update_option('xtfefoli_linkedin_user_data', $linkedin_users );
@@ -220,47 +231,73 @@ class XT_Feed_Linkedin_Ajax {
             exit;
         }
 
-        // Share to LinkedIn Company Page
-        $sharing_type    = 'manual';
-        $share_account   = isset( $_POST['share_account'] ) ? sanitize_text_field( wp_unslash( $_POST['share_account'] ) ) : '';
-        $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id, $sharing_type, $share_account );
+        // Share to every selected account (none selected = all active accounts).
+        $share_account = isset( $_POST['share_account'] ) ? $xt_feed_for_linkedin->common->xtfefoli_normalize_account_identifiers( wp_unslash( $_POST['share_account'] ) ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $outcome       = $xt_feed_for_linkedin->sharing->xtfefoli_share_post_to_accounts( $share_message, $post_id, 'manual', $share_account );
+        $pshare_message = isset( $_POST['share_message'] ) ? wp_kses_post( wp_unslash( $_POST['share_message'] ) ) : '';
 
-        if ( isset( $linkedin_result['message'] ) && !empty( $linkedin_result['message'] ) ) {
-            $e_message = $linkedin_result['message'];
-            if ( strpos( $e_message, 'Content is a duplicate' ) !== false ) {
-                $clean_result = 'This Content is already shared on LinkedIn. You may share it again after a short wait.';
-            } else {
-                $clean_result = 'An error occurred: ' . $e_message;
-            }
-            wp_send_json_error( $clean_result );
-            exit;
+        $this->xtfefoli_send_share_response( $outcome, $post_id, $pshare_message, 'metabox' );
+    }
+
+    /**
+     * Record a multi-account share outcome and answer the AJAX request.
+     *
+     * @since 1.0.6
+     * @param array  $outcome      Result of XT_Feed_Linkedin_Sharing::xtfefoli_share_post_to_accounts().
+     * @param int    $post_id      Post ID.
+     * @param string $stored_message Message template saved on the post.
+     * @param string $context      'metabox' (post editor) or 'list' (posts list column): returns the shared-post link HTML for that screen.
+     * @return void
+     */
+    private function xtfefoli_send_share_response( $outcome, $post_id, $stored_message, $context = '' ) {
+        global $xt_feed_for_linkedin;
+
+        if ( ! empty( $outcome['no_account'] ) ) {
+            $activate_url = esc_url( admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=general' ) );
+            wp_send_json_error( 'No active account was found. Please select an authorized account <strong><a href="' . $activate_url . '" target="_blank">here</a></strong>.' );
         }
-        else{
-            if ( $linkedin_result ) {
-                
-                $existing_data = get_post_meta( $post_id, '_xtfefoli_sended_on_linkedin', true );
-                
-                // Ensure it's an array
-                if ( ! is_array( $existing_data ) ) { $existing_data = []; }
-                $existing_data[] = array( 'id' => $linkedin_result, 'shared_post_datetime' => time() );
 
-                $pshare_message = isset( $_POST['share_message'] ) ? wp_kses_post( wp_unslash( $_POST['share_message'] ) ) : '';
-                //save post meta
-                update_post_meta( $post_id, '_xtfefoli_sended_on_linkedin', $existing_data );
-                update_post_meta( $post_id, '_xtfefoli_shared_on_linkedin', 1 );
-                update_post_meta( $post_id, '_xtfefoli_dont_share_post_linkedin', 1 );
-                update_post_meta( $post_id, '_xtfefoli_share_message', $pshare_message );
-
-                $post_url = esc_url( 'https://www.linkedin.com/feed/update/' . $linkedin_result );
-                $formatted_date = gmdate( 'Y-m-d H:i:s', time() );
-                $history_html = '<div style="margin: 5px 0 0 5px;"><strong><a href="' . $post_url . '" target="_blank" style="color: #0049b3; text-decoration: none;">Check out the shared post </a> ( ' . $formatted_date . ' ) </strong></div>';
-
-                wp_send_json_success( array( 'message' => 'Post shared successfully on LinkedIn.', 'history_html' => $history_html ) );
-            } else {
-                $activate_url = esc_url( admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=general' ) );
-                wp_send_json_error( 'No active account was found. Please select an authorized account <strong><a href="' . $activate_url . '" target="_blank">here</a></strong>.' );
+        $errors = array();
+        foreach ( $outcome['results'] as $result ) {
+            if ( 'shared' !== $result['status'] ) {
+                $label    = $result['label'] ? $result['label'] . ': ' : '';
+                $errors[] = esc_html( $label ) . esc_html( $xt_feed_for_linkedin->sharing->xtfefoli_format_share_error( $result['error'] ) );
             }
         }
+
+        if ( empty( $outcome['shared'] ) ) {
+            wp_send_json_error( implode( '<br>', $errors ) );
+        }
+
+        $added = $xt_feed_for_linkedin->sharing->xtfefoli_record_shared_results( $post_id, $outcome, $stored_message );
+
+        $total   = count( $outcome['results'] );
+        $message = ( 1 === $total ) ? 'Post shared successfully on LinkedIn.' : sprintf( 'Post shared successfully on %1$d of %2$d accounts.', $outcome['shared'], $total );
+        if ( ! empty( $errors ) ) {
+            $message .= '<br>' . implode( '<br>', $errors );
+        }
+
+        $response = array( 'message' => $message );
+
+        if ( in_array( $context, array( 'metabox', 'list' ), true ) ) {
+            $history_html = '';
+            foreach ( $added as $entry ) {
+                $post_url       = esc_url( 'https://www.linkedin.com/feed/update/' . $entry['id'] );
+                $formatted_date = gmdate( 'Y-m-d H:i:s', $entry['shared_post_datetime'] );
+                $suffix         = $xt_feed_for_linkedin->sharing->xtfefoli_history_account_suffix( $entry );
+                if ( 'metabox' === $context ) {
+                    $history_html .= '<div style="margin: 5px 0 0 5px;"><strong><a href="' . $post_url . '" target="_blank" style="color: #0049b3; text-decoration: none;">' . esc_html__( 'Check out the shared post ', 'xt-feed-for-linkedin' ) . '</a>' . $suffix . ' ( ' . esc_html( $formatted_date ) . ' ) </strong></div>';
+                }
+            }
+
+            if ( 'list' === $context ) {
+                $response['history_html'] = $xt_feed_for_linkedin->sharing->xtfefoli_get_column_html( $post_id, $post_type );
+            } else {
+                $response['history_html'] = $history_html;
+            }
+        }
+
+        wp_send_json_success( $response );
     }
 
     /**
@@ -298,41 +335,11 @@ class XT_Feed_Linkedin_Ajax {
             exit;
         }
 
-        // Share to LinkedIn Company Page
-        $sharing_type    = 'manual';
-        $share_account   = isset( $_POST['share_account'] ) ? sanitize_text_field( wp_unslash( $_POST['share_account'] ) ) : '';
-        $linkedin_result = $xt_feed_for_linkedin->sharing->xtfefoli_share_cpts_in_selected_account( $share_message, $post_id, $sharing_type, $share_account );
+        // Share to every selected account (none selected = all active accounts).
+        $share_account = isset( $_POST['share_account'] ) ? $xt_feed_for_linkedin->common->xtfefoli_normalize_account_identifiers( wp_unslash( $_POST['share_account'] ) ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $outcome       = $xt_feed_for_linkedin->sharing->xtfefoli_share_post_to_accounts( $share_message, $post_id, 'manual', $share_account );
 
-        if ( isset( $linkedin_result['message'] ) && !empty( $linkedin_result['message'] ) ) {
-            $e_message = $linkedin_result['message'];
-            if ( strpos( $e_message, 'Content is a duplicate' ) !== false ) {
-                $clean_result = 'This Content is already shared on LinkedIn. You may share it again after a short wait.';
-            } else {
-                $clean_result = 'An error occurred: ' . $e_message;
-            }
-            wp_send_json_error( $clean_result );
-            exit;
-        } else if ( $linkedin_result ) {
-
-            $existing_data = get_post_meta( $post_id, '_xtfefoli_sended_on_linkedin', true );
-
-            // Ensure it's an array
-            if ( ! is_array( $existing_data ) ) { $existing_data = []; }
-            $existing_data[] = array( 'id' => $linkedin_result, 'shared_post_datetime' => time() );
-
-            //save post meta
-            update_post_meta( $post_id, '_xtfefoli_sended_on_linkedin', $existing_data );
-            update_post_meta( $post_id, '_xtfefoli_shared_on_linkedin', 1 );
-            update_post_meta( $post_id, '_xtfefoli_dont_share_post_linkedin', 1 );
-            update_post_meta( $post_id, '_xtfefoli_share_message', $sanitized_message );
-
-            wp_send_json_success( 'Post shared successfully on LinkedIn.' );
-
-        } else {
-            $activate_url = esc_url( admin_url( 'admin.php?page=xt_feed_for_linkedin&tab=general' ) );
-            wp_send_json_error( 'No active account was found. Please select an authorized account <strong><a href="' . $activate_url . '" target="_blank">here</a></strong>.' );
-        }
-        wp_die();
+        $this->xtfefoli_send_share_response( $outcome, $post_id, $sanitized_message, 'list' );
     }
     
     /**
@@ -341,6 +348,7 @@ class XT_Feed_Linkedin_Ajax {
      * @since    1.0.0
      */
     public function xtfefoli_get_sharing_history_callback() {
+        global $xt_feed_for_linkedin;
         check_ajax_referer( 'xtfefoli_linkedin_feedpress_meta_box_nonce', 'xtfefoli_share_security' );
         $post_id = isset( $_POST['post_id'] ) ? intval( wp_unslash( $_POST['post_id'] ) ) : 0;
         if ( !$post_id ) {
@@ -358,7 +366,7 @@ class XT_Feed_Linkedin_Ajax {
                         $post_url = esc_url( 'https://www.linkedin.com/feed/update/' . $get_sh['id'] );
                         $formatted_date = gmdate( 'Y-m-d H:i:s', $get_sh['shared_post_datetime'] );				
                         echo '<div style="margin: 5px 0 0 5px;">
-                                <strong><a href="' . esc_url( $post_url ) . '" target="_blank" style="color: #0049b3; text-decoration: none;">' . esc_attr__( 'Check out the shared post ', 'xt-feed-for-linkedin' ) . '</a> ( ' . esc_html( $formatted_date ) . ' ) </strong>
+                                <strong><a href="' . esc_url( $post_url ) . '" target="_blank" style="color: #0049b3; text-decoration: none;">' . esc_attr__( 'Check out the shared post ', 'xt-feed-for-linkedin' ) . '</a>' . $xt_feed_for_linkedin->sharing->xtfefoli_history_account_suffix( $get_sh ) . ' ( ' . esc_html( $formatted_date ) . ' ) </strong>
                                 </div>';
                     }
                 }
