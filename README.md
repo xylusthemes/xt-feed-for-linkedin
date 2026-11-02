@@ -14,10 +14,13 @@ Whether you are a blogger, marketer, or business owner, this plugin helps you st
 
 ### ✅ **Key Features:**  
 - 🔹 **Auto-share** posts, pages, and custom post types upon publishing.  
-- 🔹 **Manual sharing** from the post details page or post list.  
-- 🔹 **Quick share** from the post list table.  
-- 🔹 Easy **LinkedIn account connection**.  
-- 🔹 Supports **multiple post types**, including custom post types.  
+- 🔹 **Multi-Account Selection:** Share to multiple LinkedIn profiles and company pages at the same time, or use all active accounts with one click.  
+- 🔹 **Modern Post List Quick Share:** Card-based UI in the All Posts table with status badges (Shared, Scheduled, Not Shared), collapsible history, and no-refresh AJAX sharing.  
+- 🔹 **Smart Content & HTML Formatting:** Converts rich post content (bullet lists, paragraphs, links, bold/italic text) into clean, LinkedIn-friendly text.  
+- 🔹 **Custom Message Templates & Character Limits:** Use dynamic tags like `[POST_TITLE]`, `[POST_LINK]`, etc., with excerpt limit control and live preview.  
+- 🔹 **Manual sharing** from the post details page or post list table.  
+- 🔹 Easy **LinkedIn account connection** for personal profiles and company pages.  
+- 🔹 Supports **multiple post types**, including WooCommerce products, portfolios, and custom post types.  
 - 🔹 Simple, user-friendly interface with seamless WordPress integration.  
 
 Boost your content strategy, increase engagement, and save time by automating LinkedIn post sharing directly from WordPress. 🚀  
@@ -78,6 +81,35 @@ Posts can be shared either:
 ---
 
 ## 🛠️ Changelog  
+
+### 🚀 **1.0.6**
+- **Added:** Multi-account selection support to share posts to multiple LinkedIn profiles and company pages simultaneously.
+- **Added:** Smart HTML formatting option to convert rich post content into LinkedIn-friendly plain text (bullet points, line breaks, bold/italic unicode characters).
+- **Added:** Description character limit control with real-time live preview in Sharing Options.
+- **Improved:** Redesigned the post list table column with a modern card layout, clean status badges (Shared, Scheduled, Not Shared), and collapsible share history.
+- **Improved:** Guaranteed post list column placement at the very end of the table for consistent layout.
+- **Improved:** No-refresh AJAX quick-sharing in the post list table.
+- **Improved:** Account selector UI with distinct Profile and Page badges and refined scroll behavior.
+
+### 🚀 **1.0.5**
+- **Added:** LinkedIn Personal Profile feed support to fetch and display profile posts (PRO).
+- **Added:** "Include Re-posts" option to toggle shared and reposted content on or off (PRO).
+- **Improved:** Feed synchronization, security, and cache management.
+
+### 🚀 **1.0.4**
+- **Added:** Live LinkedIn Feed builder to display your company page updates on your website.
+
+### 🚀 **1.0.3**
+- **Added:** Live preview in the sharing option menu.
+
+### 🚀 **1.0.2**
+- **Added:** Fully compatible with the XT Feed for LinkedIn PRO version.
+- **Tested:** Fully tested with WordPress up to version 7.0.
+- **Improved:** Performance and overall plugin stability.
+
+### 🚀 **1.0.1**
+- **Fixed:** PHP warnings that appeared in certain conditions.
+- **Improved:** Overall code stability and error handling.
 
 ### 🚀 **1.0.0**  
 - Initial release of **XT Feed for LinkedIn**.  
